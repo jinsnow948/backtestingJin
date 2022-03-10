@@ -1,10 +1,10 @@
 import os
-import re
 import sys
 
 import logging.config
 import json
 
+from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 
@@ -40,7 +40,7 @@ class WindowClass(QMainWindow, form_class):
         self.max_vol_duration_edit.setText('10')
         self.max_vol_occur_edit.setText('3')
         self.lowest_duration_edit.setText('1')
-        self.lowest_contrast_edit.setText('1.3')
+        self.lowest_contrast_edit.setText('1.4')
 
         # 성장성
         self.per_edit.setText('20')
@@ -49,7 +49,22 @@ class WindowClass(QMainWindow, form_class):
 
     def search_clicked(self):
         args = self.get_edit_text()
-        find_maxvol_mon(args)
+        max_list = find_maxvol_mon(args)
+
+        try:
+            # model 생성
+            model = QStandardItemModel()
+            self.listView.setModel(model)
+
+            if max_list:
+                for i in max_list:
+                    item = QStandardItem(i)
+                    model.appendRow(item)
+            else:
+                item = QStandardItem('Nothing!!!')
+                model.appendRow(item)
+        except Exception as e:
+            logger.error(e)
 
     def get_edit_text(self):
         """
@@ -85,13 +100,4 @@ if __name__ == '__main__':
     myWindow.show()
 
     # 프로그램을 이벤트루프로 진입시키는(프로그램을 작동시키는) 코드
-    sys.exit(app.exec_())
-
-    # 코스닥 차트 그릴 년도
-    # five_yrs = today - relativedelta(years=5)
-
-    # 코스닥 차트그리기
-    # fg = make_chart(five_yrs, '2001')
-    # fg.show()
-
-    # logger.debug(f'전 종목번호 조회 {tickers}')
+    app.exec_()
