@@ -5,23 +5,22 @@ import sys
 import logging.config
 import json
 
-
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 
+from backtestImpl import find_maxvol_mon
 
 # log 폴더 만들기
 if not os.path.exists('../log'):
     os.makedirs('../log')
 
 # json load
-config = json.load(open('../config/logger.json'))
+with open('../config/logger.json') as f:
+    config = json.load(f)
 logging.config.dictConfig(config)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('logger-1')
 logging.getLogger("urllib3").setLevel(logging.WARNING)
-logging.getLogger("urllib3").setLevel(logging.WARNING)
-logging.getLogger("uiparser").setLevel(logging.WARNING)
-logging.getLogger("properties").setLevel(logging.WARNING)
+logging.getLogger("PyQt5.uic").setLevel(logging.WARNING)
 
 KOSPI = "1001"
 KOSDAQ = "2001"
@@ -38,30 +37,41 @@ class WindowClass(QMainWindow, form_class):
 
         # default value
         # 주가
-        self.max_vol_duration_edit.getText(10)
-        self.max_vol_occur_edit.getText(3)
-        self.lowest_duration_edit.getText(1)
-        self.lowest_contrast_edit.getText(1.3)
+        self.max_vol_duration_edit.setText('10')
+        self.max_vol_occur_edit.setText('3')
+        self.lowest_duration_edit.setText('1')
+        self.lowest_contrast_edit.setText('1.3')
 
         # 성장성
-        self.per_edit(20)
-        self.dept_edit(100)
-        self.margin_edit(20)
+        self.per_edit.setText('20')
+        self.dept_edit.setText('100')
+        self.margin_edit.setText('20')
 
     def search_clicked(self):
-        print(111)
+        args = self.get_edit_text()
+        find_maxvol_mon(args)
 
     def get_edit_text(self):
+        """
+            text edit 값 가져오기
+        :return: dict = {max_vol_duration, max_vol_occur, lowest_duration,
+        lowest_contrast, per_rate, dept_rate, margin_rate}
+        """
         max_vol_duration = self.max_vol_duration_edit.text()
         max_vol_occur = self.max_vol_occur_edit.text()
         lowest_duration = self.lowest_duration_edit.text()
         lowest_contrast = self.lowest_contrast_edit.text()
 
-        per = self.per_edit.text()
-        dept = self.dept_edit.text()
-        margin = self.margin_edit.text()
+        per_rate = self.per_edit.text()
+        dept_rate = self.dept_edit.text()
+        margin_rate = self.margin_edit.text()
 
-        edit_text_list = [max_vol_duration,max_vol_occur,lowest_duration,lowest_contrast,per,dept,margin]
+        edit_text_list = {"max_vol_duration": max_vol_duration, "max_vol_occur": max_vol_occur,
+                          "lowest_duration": lowest_duration, "lowest_contrast": lowest_contrast,
+                          "per_rate": per_rate, "dept_rate": dept_rate, "margin_rate": margin_rate}
+
+        return edit_text_list
+
 
 # 스크립트를 실행하려면 여백의 녹색 버튼을 누릅니다.
 if __name__ == '__main__':
@@ -77,20 +87,11 @@ if __name__ == '__main__':
     # 프로그램을 이벤트루프로 진입시키는(프로그램을 작동시키는) 코드
     sys.exit(app.exec_())
 
-    today = date.today()
-
     # 코스닥 차트 그릴 년도
-    five_yrs = today - relativedelta(years=5)
+    # five_yrs = today - relativedelta(years=5)
 
     # 코스닥 차트그리기
     # fg = make_chart(five_yrs, '2001')
     # fg.show()
 
-    # 전종목 조회하기
-    kospi_tickers = stock.get_market_ticker_list(date=today, market="KOSPI")
-    kosdaq_tickers = stock.get_market_ticker_list(date=today, market="KOSDAQ")
-    tickers = kospi_tickers + kosdaq_tickers
-
     # logger.debug(f'전 종목번호 조회 {tickers}')
-    n_year = ""
-

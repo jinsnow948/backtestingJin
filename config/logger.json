@@ -1,22 +1,11 @@
 {
   "version": 1,
   "disable_existing_loggers": false,
-  "root": {
-    "handlers": ["console"],
-    "level": "DEBUG"
-  },
-  "loggers": {
-    "main": {
-      "handlers": ["console","file"],
-      "level": "DEBUG",
-      "propagate": true
-    }
-  },
   "formatters": {
-      "basic": {
-        "format": "[%(asctime)-15s] (%(filename)s:%(lineno)d) %(module)s:%(levelname)s - %(message)s",
-        "datefmt": "%Y-%m-%d %H:%M:%S"
-      }
+    "basic": {
+      "format": "[%(asctime)-15s] (%(filename)s:%(lineno)d) %(module)s:%(levelname)s - %(message)s",
+      "datefmt": "%Y-%m-%d %H:%M:%S"
+    }
   },
   "handlers": {
       "console": {
@@ -30,5 +19,12 @@
         "formatter": "basic",
         "filename": "../log/info.log"
       }
+  },
+  "loggers": {
+    "logger-1": {
+      "level": "DEBUG",
+      "handlers": ["console","file"],
+      "propagate": true
+    }
   }
 }

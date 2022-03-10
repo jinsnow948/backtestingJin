@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>847</width>
-    <height>544</height>
+    <width>819</width>
+    <height>531</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
     <rect>
      <x>30</x>
      <y>40</y>
-     <width>771</width>
+     <width>761</width>
      <height>461</height>
     </rect>
    </property>
@@ -49,7 +49,7 @@
       <rect>
        <x>40</x>
        <y>60</y>
-       <width>230</width>
+       <width>221</width>
        <height>151</height>
       </rect>
      </property>
@@ -57,14 +57,14 @@
       <item>
        <widget class="QLabel" name="max_vol_duration_label">
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;최대 거래량 기간(년) :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#fefefe;&quot;&gt;역대 거래량 기간 :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QLabel" name="max_vol_occur_label">
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;최대 거래량 발생 기간(월) :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;역대 거래량 발생 개월 :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
@@ -153,7 +153,7 @@
       <rect>
        <x>40</x>
        <y>270</y>
-       <width>231</width>
+       <width>221</width>
        <height>101</height>
       </rect>
      </property>
@@ -260,10 +260,10 @@
     <widget class="QListView" name="listView">
      <property name="geometry">
       <rect>
-       <x>460</x>
-       <y>60</y>
+       <x>450</x>
+       <y>50</y>
        <width>281</width>
-       <height>321</height>
+       <height>331</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -273,8 +273,8 @@
     <widget class="QLabel" name="Result_label">
      <property name="geometry">
       <rect>
-       <x>460</x>
-       <y>30</y>
+       <x>450</x>
+       <y>20</y>
        <width>171</width>
        <height>31</height>
       </rect>
@@ -305,7 +305,7 @@
     <widget class="QPushButton" name="search_button">
      <property name="geometry">
       <rect>
-       <x>190</x>
+       <x>200</x>
        <y>390</y>
        <width>101</width>
        <height>26</height>
