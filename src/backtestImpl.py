@@ -85,7 +85,7 @@ def find_maxvol_mon(args):
                 lowest_price <= max_vol_price <= lowest_price * float(args['lowest_contrast']) and \
                 PER평균 < int(args['per_rate']) and 부채비율 < int(args['dept_rate']) and \
                 영업이익률 >= int(args['margin_rate']):
-            max_vol_code.append(code)
+            max_vol_code.append({'종목번호': code,'종목명': stock.get_market_ticker_name(code)})
             logger.info('%s년 역대 거래량, %s개월 이내 %s', args['max_vol_duration'],args['max_vol_occur'],
                         stock.get_market_ticker_name(code))
 

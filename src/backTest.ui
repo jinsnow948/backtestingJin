@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>819</width>
+    <width>864</width>
     <height>531</height>
    </rect>
   </property>
@@ -24,7 +24,7 @@
     <rect>
      <x>30</x>
      <y>40</y>
-     <width>761</width>
+     <width>791</width>
      <height>461</height>
     </rect>
    </property>
@@ -78,7 +78,7 @@
       <item>
        <widget class="QLabel" name="lowest_contrast_label">
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;최저가 대비(배) :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;최저가 대비율(배) :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
@@ -257,19 +257,6 @@
       </item>
      </layout>
     </widget>
-    <widget class="QListView" name="listView">
-     <property name="geometry">
-      <rect>
-       <x>450</x>
-       <y>50</y>
-       <width>281</width>
-       <height>331</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(255, 255, 255);</string>
-     </property>
-    </widget>
     <widget class="QLabel" name="Result_label">
      <property name="geometry">
       <rect>
@@ -386,9 +373,31 @@ border-radius: 3px</string>
       <string/>
      </property>
     </widget>
+    <widget class="QTableWidget" name="itemTable">
+     <property name="geometry">
+      <rect>
+       <x>450</x>
+       <y>50</y>
+       <width>301</width>
+       <height>331</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(238, 238, 238);</string>
+     </property>
+     <column>
+      <property name="text">
+       <string>종목번호</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>종목명</string>
+      </property>
+     </column>
+    </widget>
     <zorder>label_2</zorder>
     <zorder>label</zorder>
-    <zorder>listView</zorder>
     <zorder>verticalLayoutWidget</zorder>
     <zorder>growth_label</zorder>
     <zorder>verticalLayoutWidget_2</zorder>
@@ -398,6 +407,7 @@ border-radius: 3px</string>
     <zorder>search_button</zorder>
     <zorder>excel_download_button</zorder>
     <zorder>value_label</zorder>
+    <zorder>itemTable</zorder>
    </widget>
    <widget class="QWidget" name="tab2">
     <attribute name="title">

@@ -51,18 +51,19 @@ class WindowClass(QMainWindow, form_class):
         args = self.get_edit_text()
         max_list = find_maxvol_mon(args)
 
-        try:
-            # model 생성
-            model = QStandardItemModel()
-            self.listView.setModel(model)
+        table = self.itemTable.tableWidget
 
+        header = table.horizontalHeader()
+        header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
+
+        try:
             if max_list:
-                for i in max_list:
-                    item = QStandardItem(i)
-                    model.appendRow(item)
-            else:
-                item = QStandardItem('Nothing!!!')
-                model.appendRow(item)
+                for item in max_list:
+                    row = self.itemTable.rowCount()
+                    self.itemTable.insertRow(row)
+                    self.itemTable.setItem(row, 0, QTableWidgetItem(item['종목번호']))
+                    self.itemTable.setItem(row, 1, QTableWidgetItem(item['종목명']))
         except Exception as e:
             logger.error(e)
 
