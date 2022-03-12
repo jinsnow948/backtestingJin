@@ -385,6 +385,12 @@ border-radius: 3px</string>
      <property name="styleSheet">
       <string notr="true">background-color: rgb(238, 238, 238);</string>
      </property>
+     <attribute name="horizontalHeaderCascadingSectionResizes">
+      <bool>true</bool>
+     </attribute>
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
      <column>
       <property name="text">
        <string>종목번호</string>

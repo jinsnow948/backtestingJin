@@ -4,7 +4,6 @@ import sys
 import logging.config
 import json
 
-from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 
@@ -40,22 +39,16 @@ class WindowClass(QMainWindow, form_class):
         self.max_vol_duration_edit.setText('10')
         self.max_vol_occur_edit.setText('3')
         self.lowest_duration_edit.setText('1')
-        self.lowest_contrast_edit.setText('1.4')
+        self.lowest_contrast_edit.setText('1.7')
 
         # 성장성
-        self.per_edit.setText('20')
+        self.per_edit.setText('40')
         self.dept_edit.setText('100')
-        self.margin_edit.setText('20')
+        self.margin_edit.setText('15')
 
     def search_clicked(self):
         args = self.get_edit_text()
         max_list = find_maxvol_mon(args)
-
-        table = self.itemTable.tableWidget
-
-        header = table.horizontalHeader()
-        header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
 
         try:
             if max_list:

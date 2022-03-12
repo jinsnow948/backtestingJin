@@ -1,6 +1,7 @@
 from datetime import date
 
 import requests
+from bs4 import BeautifulSoup
 from pykrx import stock
 from dateutil.relativedelta import relativedelta
 
@@ -31,7 +32,8 @@ def find_maxvol_mon(args):
     kospi_market = stock.get_market_ticker_list(date=today, market="KOSPI")
     kosdaq_market = stock.get_market_ticker_list(date=today, market="KOSDAQ")
     total_market = kospi_market + kosdaq_market
-
+    halt_list = trading_halt_list()
+    mg_list = management_list()
     max_vol_code = []
 
     for code in total_market:
@@ -50,7 +52,9 @@ def find_maxvol_mon(args):
         total_six_list = kospi_six_ago + kosdaq_six_ago
 
         # "500 원 이하, 최고 종가 월 == 기준월", 6개월안에 상장된 신생 종목은 PASS
-        if df.empty or base_day_price < 500 or max_price_mon == today.strftime("%Y%m") or (code not in total_six_list):
+        if df.empty or base_day_price < 700 or (code not in total_six_list) \
+                or (stock.get_market_ticker_name(code) in halt_list) \
+                or (stock.get_market_ticker_name(code) in mg_list):
             logger.debug(f"[{code}], 가격 {base_day_price}, 최고가 {max_price_mon}월 - PASS")
             continue
 
@@ -69,9 +73,13 @@ def find_maxvol_mon(args):
         if annual_df.empty:
             continue
 
-        PER평균 = annual_df.loc['PER(배)'].iloc[:-1].astype(float).mean()
-        부채비율 = annual_df.loc['부채비율'].iloc[:-1].astype(float).mean()
-        영업이익률 = annual_df.loc['영업이익률'].iloc[:-1].astype(float).mean()
+        try:
+            PER평균 = annual_df.loc['PER(배)'].iloc[:-1].astype(float).mean()
+            부채비율 = annual_df.loc['부채비율'].iloc[:-1].astype(float).mean()
+            영업이익률 = annual_df.loc['영업이익률'].iloc[:-1].astype(float).mean()
+        except ValueError as ve:
+            logger.error('[%s] - %s', code, ve)
+            continue
 
         logger.debug('[{0}] 최대 거래량 날짜: {1}, 최저가: {2}원, 최대 거래량 가격: {3}원, 최저가 대비: {4}배, PER평균: {5}%, '
                      '부채비율: {6}%, 영업이익률: {7}%'.format(code, max_vol_date.strftime("%Y%m%d"), lowest_price,
@@ -85,11 +93,11 @@ def find_maxvol_mon(args):
                 lowest_price <= max_vol_price <= lowest_price * float(args['lowest_contrast']) and \
                 PER평균 < int(args['per_rate']) and 부채비율 < int(args['dept_rate']) and \
                 영업이익률 >= int(args['margin_rate']):
-            max_vol_code.append({'종목번호': code,'종목명': stock.get_market_ticker_name(code)})
-            logger.info('%s년 역대 거래량, %s개월 이내 %s', args['max_vol_duration'],args['max_vol_occur'],
+            max_vol_code.append({'종목번호': str(code), '종목명': stock.get_market_ticker_name(code)})
+            logger.info('%s년 역대 거래량, %s개월 이내 %s', args['max_vol_duration'], args['max_vol_occur'],
                         stock.get_market_ticker_name(code))
 
-    logger.debug(max_vol_code)
+    logger.debug('최대 거래량 종목 {0}'.format(max_vol_code))
     return max_vol_code
 
 
@@ -99,7 +107,7 @@ def naver_financial_data(code):
     try:
         financial_stmt = pd.read_html(res.text)[3]
     except Exception as e:
-        logger.error(e)
+        logger.error('[%s] - %s', code, e)
         return pd.DataFrame()
 
     if ('주요재무정보', '주요재무정보', '주요재무정보') in financial_stmt.columns:
@@ -112,12 +120,31 @@ def naver_financial_data(code):
     else:
         return pd.DataFrame()
 
-    # "500 원 이하, 최고 종가 월 == 기준월", 6개월안에 상장된 신생 종목은 PASS
-    # if df.empty or base_day_price < 500 or max_mon_price == base_day.strftime("%Y%m") or (ticker not in tick_list):
-    # logger.debug(f"PASS 종목 {ticker}, 기준일 {base_day.strftime('%Y%m%d')}, 가격 {base_day_price}, "
-    #              f"최고가 월 {max_mon_price}")
-    # return
 
-    # 날짜 비교를 위해 년월까지
-    # maxidx = datetime.strftime(maxidx, "%Y%m")
-    # std = datetime.strftime(base_day, "%Y%m")
+def trading_halt_list():
+    baseaddress = 'https://finance.naver.com/sise/trading_halt.naver'
+
+    stoplist = []
+    res = requests.get(baseaddress)
+    soup = BeautifulSoup(res.content.decode('euc-kr', 'replace'), 'html.parser')
+    lists = soup.select('div.box_type_l table tr')
+
+    for item in lists:
+        if len(item) == 9 and item.text.split('\n')[2] != '종목명':
+            stoplist.append(item.text.split('\n')[2])
+
+    return stoplist
+
+
+def management_list():
+    baseaddress = 'https://finance.naver.com/sise/management.nhn'
+    stoplist = []
+    res = requests.get(baseaddress)
+    soup = BeautifulSoup(res.content.decode('euc-kr', 'replace'), 'html.parser')
+
+    items = soup.select('div.box_type_l table tr')
+    for item in items:
+        if len(item) == 17 and item.text.split('\n')[2] != '종목명':
+            stoplist.append(item.text.split('\n')[2])
+
+    return stoplist
