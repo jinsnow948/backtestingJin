@@ -37,9 +37,8 @@ class WindowClass(QMainWindow, form_class):
         # default value
         # 주가
         self.max_vol_duration_edit.setText('10')
-        self.max_vol_occur_edit.setText('3')
         self.lowest_duration_edit.setText('1')
-        self.lowest_contrast_edit.setText('1.7')
+        self.lowest_contrast_edit.setText('1.4')
 
         # 성장성
         self.per_edit.setText('40')
@@ -63,11 +62,9 @@ class WindowClass(QMainWindow, form_class):
     def get_edit_text(self):
         """
             text edit 값 가져오기
-        :return: dict = {max_vol_duration, max_vol_occur, lowest_duration,
-        lowest_contrast, per_rate, dept_rate, margin_rate}
+        :return: dict = {max_vol_duration, lowest_duration, lowest_contrast, per_rate, dept_rate, margin_rate}
         """
         max_vol_duration = self.max_vol_duration_edit.text()
-        max_vol_occur = self.max_vol_occur_edit.text()
         lowest_duration = self.lowest_duration_edit.text()
         lowest_contrast = self.lowest_contrast_edit.text()
 
@@ -75,9 +72,9 @@ class WindowClass(QMainWindow, form_class):
         dept_rate = self.dept_edit.text()
         margin_rate = self.margin_edit.text()
 
-        edit_text_list = {"max_vol_duration": max_vol_duration, "max_vol_occur": max_vol_occur,
-                          "lowest_duration": lowest_duration, "lowest_contrast": lowest_contrast,
-                          "per_rate": per_rate, "dept_rate": dept_rate, "margin_rate": margin_rate}
+        edit_text_list = {"max_vol_duration": max_vol_duration, "lowest_duration": lowest_duration,
+                          "lowest_contrast": lowest_contrast, "per_rate": per_rate,
+                          "dept_rate": dept_rate, "margin_rate": margin_rate}
 
         return edit_text_list
 
