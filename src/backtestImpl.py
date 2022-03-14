@@ -32,10 +32,11 @@ def find_maxvol_mon(args):
     kospi_market = stock.get_market_ticker_list(date=today, market="KOSPI")
     kosdaq_market = stock.get_market_ticker_list(date=today, market="KOSDAQ")
     total_market = kospi_market + kosdaq_market
+    # total_market = ['000590']
     halt_list = trading_halt_list()
     mg_list = management_list()
     max_vol_code = []
-
+    # try:
     for code in total_market:
         logger.info('[%s] - 시세 조회', code)
         # 종목별 시세 조회
@@ -65,7 +66,7 @@ def find_maxvol_mon(args):
         subset_df = df.iloc[-(int(args['lowest_duration']) * 13):]  # 최저가 기간
         lowest_price_day = subset_df['종가'].idxmin()  # 최저가 날짜
         lowest_price = subset_df.loc[lowest_price_day]['종가']  # 최저가 가격
-        subset_df_avg = subset_df.mean()
+        subset_df_avg = subset_df['종가'].mean()
 
         logger.info('[%s] - 재무정보 조회', code)
         annual_df = naver_financial_data(code)
@@ -86,7 +87,9 @@ def find_maxvol_mon(args):
                      '부채비율: {6}%, 영업이익률: {7}%'.format(code, max_vol_date.strftime("%Y%m%d"), lowest_price,
                                                       max_vol_price, args['lowest_contrast'], args['per_rate'],
                                                       args['dept_rate'], args['margin_rate']))
-        max_vol_occur_date = (today - relativedelta(years=int(args['lowest_duration'])))
+        max_vol_occur_date = (today - relativedelta(months=int(args['max_vol_occur'])))
+        # logger.debug(float(args['lowest_contrast']))
+        # logger.debug(lowest_price * float(args['lowest_contrast']))
         # logger.debug('type 확인 max_vol_occur_date:%s, max_vol_date:%s, today:%s',type(max_vol_occur_date),
         #              type(max_vol_date),type(today))
         # 최대 거래 월이 현재로부터 N 개월 안에 터졌다면 종목 추가
@@ -94,9 +97,13 @@ def find_maxvol_mon(args):
                 lowest_price * float(args['lowest_contrast']) >= subset_df_avg and \
                 PER평균 < int(args['per_rate']) and 부채비율 < int(args['dept_rate']) and \
                 영업이익률 >= int(args['margin_rate']):
-            max_vol_code.append({'종목번호': str(code), '종목명': stock.get_market_ticker_name(code)})
+            max_vol_code.append({'종목번호': str(code), '종목명': stock.get_market_ticker_name(code),
+                                 '재무정보': f'https://finance.naver.com/item/main.nhn?code={code}',
+                                 '뉴스': f'https://finance.naver.com/item/news_news.nhn?code={code}'})
             logger.info('%s년 역대 거래량, 최저가 대비 %s배 이하, %s', args['max_vol_duration'], args['lowest_contrast'],
                         stock.get_market_ticker_name(code))
+    # except Exception as e:
+    #     logger.error('[%s] - %s', code, e)
 
     logger.debug('최대 거래량 종목 {0}'.format(max_vol_code))
     return max_vol_code
@@ -149,3 +156,4 @@ def management_list():
             stoplist.append(item.text.split('\n')[2])
 
     return stoplist
+

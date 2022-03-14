@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>864</width>
-    <height>531</height>
+    <width>972</width>
+    <height>534</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>YeoStock</string>
+   <string>Jinstock</string>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
@@ -24,7 +24,7 @@
     <rect>
      <x>30</x>
      <y>40</y>
-     <width>791</width>
+     <width>911</width>
      <height>461</height>
     </rect>
    </property>
@@ -49,15 +49,25 @@
       <rect>
        <x>40</x>
        <y>60</y>
-       <width>221</width>
+       <width>302</width>
        <height>131</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetDefaultConstraint</enum>
+      </property>
       <item>
        <widget class="QLabel" name="max_vol_duration_label">
         <property name="text">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#fefefe;&quot;&gt;역대 거래량 기간 :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="max_vol_occur_label">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;현재 기준 역대 거래량 발생 개월 :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
@@ -146,7 +156,7 @@
       <rect>
        <x>40</x>
        <y>270</y>
-       <width>221</width>
+       <width>301</width>
        <height>101</height>
       </rect>
      </property>
@@ -177,7 +187,7 @@
     <widget class="QWidget" name="verticalLayoutWidget_3">
      <property name="geometry">
       <rect>
-       <x>290</x>
+       <x>370</x>
        <y>60</y>
        <width>111</width>
        <height>131</height>
@@ -189,6 +199,13 @@
         <property name="autoFillBackground">
          <bool>false</bool>
         </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 255, 255);</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="max_vol_occur_edit">
         <property name="styleSheet">
          <string notr="true">background-color: rgb(255, 255, 255);</string>
         </property>
@@ -213,7 +230,7 @@
     <widget class="QWidget" name="verticalLayoutWidget_4">
      <property name="geometry">
       <rect>
-       <x>290</x>
+       <x>370</x>
        <y>270</y>
        <width>111</width>
        <height>101</height>
@@ -246,7 +263,7 @@
     <widget class="QLabel" name="Result_label">
      <property name="geometry">
       <rect>
-       <x>450</x>
+       <x>520</x>
        <y>20</y>
        <width>171</width>
        <height>31</height>
@@ -278,7 +295,7 @@
     <widget class="QPushButton" name="search_button">
      <property name="geometry">
       <rect>
-       <x>200</x>
+       <x>280</x>
        <y>390</y>
        <width>101</width>
        <height>26</height>
@@ -294,7 +311,7 @@
     <widget class="QPushButton" name="excel_download_button">
      <property name="geometry">
       <rect>
-       <x>310</x>
+       <x>390</x>
        <y>390</y>
        <width>101</width>
        <height>26</height>
@@ -312,7 +329,7 @@
       <rect>
        <x>30</x>
        <y>50</y>
-       <width>381</width>
+       <width>461</width>
        <height>151</height>
       </rect>
      </property>
@@ -338,7 +355,7 @@ border-radius: 3px</string>
       <rect>
        <x>30</x>
        <y>260</y>
-       <width>381</width>
+       <width>461</width>
        <height>121</height>
       </rect>
      </property>
@@ -362,9 +379,9 @@ border-radius: 3px</string>
     <widget class="QTableWidget" name="itemTable">
      <property name="geometry">
       <rect>
-       <x>450</x>
+       <x>520</x>
        <y>50</y>
-       <width>301</width>
+       <width>361</width>
        <height>331</height>
       </rect>
      </property>
