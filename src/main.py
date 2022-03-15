@@ -5,8 +5,7 @@ import logging.config
 import json
 from datetime import date
 
-from PyQt5.QtGui import QBrush, QColor
-from PyQt5.uic.properties import QtGui
+from PyQt5.QtGui import QIcon
 from dateutil.relativedelta import relativedelta
 
 from PyQt5.QtWidgets import *
@@ -24,16 +23,6 @@ class WindowClass(QMainWindow, form_class):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-
-        self.tabWidget.setStyleSheet("QTabBar::tab {background-color: rgb(4, 3, 4, 57); color: rgb(238, 238, 238);"
-                                     "font-size:11pt;height: 30px; width: 90px;} "
-                                     "QTabBar::tab:selected {background-color:rgb(85, 5, 20,77);}")
-        self.itemTable.setStyleSheet("QTableCornerButton::section {background-color: rgb(0, 0, 0, 30);} "
-                                     "QTableWidget {color: rgb(238, 238, 238);}")
-        self.itemTable.horizontalHeader().setStyleSheet("QHeaderView::section {background-color: rgb(0, 0, 0, 30); "
-                                                        "color: rgb(238, 238, 238);}")
-        self.itemTable.verticalHeader().setStyleSheet("QHeaderView::section {background-color: rgb(0, 0, 0, 30); "
-                                                      "color: rgb(238, 238, 238);} ")
 
         self.search_button.clicked.connect(self.search_clicked)
         self.excel_download_button.clicked.connect(self.download_clicked)
@@ -202,6 +191,8 @@ if __name__ == '__main__':
 
     # QApplication : 프로그램을 실행시켜주는 클래스
     app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon('../icons/rich-man.ico'))
+    # app.setStyle("Fusion")
 
     # WindowClass의 인스턴스 생성
     myWindow = WindowClass()
