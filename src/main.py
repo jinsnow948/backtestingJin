@@ -3,7 +3,8 @@ import sys
 
 import logging.config
 import json
-from typing import List, Dict
+from datetime import date
+from dateutil.relativedelta import relativedelta
 
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
@@ -13,8 +14,6 @@ from backtestImpl import find_maxvol_mon
 import tkinter as tk
 from tkinter import filedialog
 import pandas as pd
-
-# from pandas import DataFrame
 
 form_class = uic.loadUiType("backTest.ui")[0]
 
@@ -26,7 +25,17 @@ class WindowClass(QMainWindow, form_class):
         self.setupUi(self)
         self.search_button.clicked.connect(self.search_clicked)
         self.excel_download_button.clicked.connect(self.download_clicked)
+
+        self.today_radioButton.clicked.connect(self.radFunction)
+        self.predate_radioButton.clicked.connect(self.radFunction)
+        self.year_radioButton.clicked.connect(self.radFunction)
+        self.month_radioButton.clicked.connect(self.radFunction)
+
+        self.year_radioButton.hide()
+        self.month_radioButton.hide()
+
         self.max_list = []
+        self.base_date = ""
 
         # default value
         # 주가
@@ -41,12 +50,16 @@ class WindowClass(QMainWindow, form_class):
         self.margin_edit.setText('15')
 
     def search_clicked(self):
+        """
+            종목 찾기 버튼 클릭
+        :return:
+        """
         try:
-            while self.itemTable.rowCount() > 0:
-                self.itemTable.removeRow(0)
+            self.itemTable.setRowCount(0)
 
             args = self.get_edit_text()
             self.max_list: list[dict[str, str]] = find_maxvol_mon(args)
+
             if self.max_list:
                 for item in self.max_list:
                     row = self.itemTable.rowCount()
@@ -56,8 +69,11 @@ class WindowClass(QMainWindow, form_class):
         except Exception as e:
             logger.error(e)
 
-
     def download_clicked(self):
+        """
+            엑셀다운로드 버튼 클릭
+        :return:
+        """
         root = tk.Tk()
         root.withdraw()
         filename = filedialog.asksaveasfilename(initialdir="/", title="Select file", defaultextension=".xlsx",
@@ -72,12 +88,17 @@ class WindowClass(QMainWindow, form_class):
         df2 = df2.rename(columns={"search_duration": "종목 검색 기간", "max_vol_within": "N개월 이내 최대 거래량",
                                   "lowest_duration": "N년 최저가", "lowest_contrast": "최저가 기간 평균 대비 최저가 배수",
                                   "per_rate": "PER 평균", "dept_rate": "부채비율", "margin_rate": "평균 영업이익률"})
-        df2 = (df2.T)
 
-        # DataFrame을 xlsx에 쓰기
-        df.to_excel(writer, sheet_name='Summary')
-        df2.style.set_properties(**{'text-align': 'left'}).to_excel(writer, sheet_name='Summary',
-                                                                    startcol=6, startrow=0)
+        try:
+            df2 = (df2.T)
+            # DataFrame을 xlsx에 쓰기
+            df.to_excel(writer, sheet_name='Summary')
+            df2.style.set_properties(**{'text-align': 'right'}). \
+                set_table_styles([dict(selector='th', props=[('text-align', 'left')])]). \
+                to_excel(writer, sheet_name='Summary', startcol=6, startrow=0)
+
+        except Exception as e:
+            logger.error(e)
 
         # Pandas writer 객체 닫기
         writer.close()
@@ -102,6 +123,22 @@ class WindowClass(QMainWindow, form_class):
                           "per_rate": per_rate, "dept_rate": dept_rate, "margin_rate": margin_rate}
 
         return edit_text_list
+
+    def radFunction(self):
+        if self.today_radioButton.isChecked():
+            self.base_date_edit.setText(date.today().strftime("%Y%m%d"))
+            self.year_radioButton.hide()
+            self.month_radioButton.hide()
+            # self.base_date = date.today().strftime("%Y%m%d")
+        elif self.predate_radioButton.isChecked():
+            self.base_date_edit.setText("")
+
+            self.year_radioButton.show()
+            self.month_radioButton.show()
+            # if self.year_radioButton.isChecked():
+            #     self.base_date = date.today() - relativedelta(years=int(self.base_date_edit.text()))
+            # elif self.month_radioButton.isChecked():
+            #     self.base_date = date.today() - relativedelta(years=int(self.base_date_edit.text()))
 
 
 # 스크립트를 실행하려면 여백의 녹색 버튼을 누릅니다.

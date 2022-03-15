@@ -17,8 +17,7 @@
         "class": "logging.FileHandler",
         "level": "ERROR",
         "formatter": "basic",
-        "filename": "../log/info.log",
-        "encoding": "utf-8"
+        "filename": "../log/error.log"
       }
   },
   "loggers": {
