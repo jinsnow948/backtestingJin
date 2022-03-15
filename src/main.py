@@ -4,12 +4,13 @@ import sys
 import logging.config
 import json
 from datetime import date
+
+from PyQt5.QtGui import QBrush, QColor
+from PyQt5.uic.properties import QtGui
 from dateutil.relativedelta import relativedelta
 
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
-
-from backtestImpl import find_maxvol_mon
 
 import tkinter as tk
 from tkinter import filedialog
@@ -23,6 +24,17 @@ class WindowClass(QMainWindow, form_class):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+
+        self.tabWidget.setStyleSheet("QTabBar::tab {background-color: rgb(4, 3, 4, 57); color: rgb(238, 238, 238);"
+                                     "font-size:11pt;height: 30px; width: 90px;} "
+                                     "QTabBar::tab:selected {background-color:rgb(85, 5, 20,77);}")
+        self.itemTable.setStyleSheet("QTableCornerButton::section {background-color: rgb(0, 0, 0, 30);} "
+                                     "QTableWidget {color: rgb(238, 238, 238);}")
+        self.itemTable.horizontalHeader().setStyleSheet("QHeaderView::section {background-color: rgb(0, 0, 0, 30); "
+                                                        "color: rgb(238, 238, 238);}")
+        self.itemTable.verticalHeader().setStyleSheet("QHeaderView::section {background-color: rgb(0, 0, 0, 30); "
+                                                      "color: rgb(238, 238, 238);} ")
+
         self.search_button.clicked.connect(self.search_clicked)
         self.excel_download_button.clicked.connect(self.download_clicked)
 
@@ -58,7 +70,36 @@ class WindowClass(QMainWindow, form_class):
             self.itemTable.setRowCount(0)
 
             args = self.get_edit_text()
-            self.max_list: list[dict[str, str]] = find_maxvol_mon(args)
+            # self.max_list: list[dict[str, str]] = find_maxvol_mon(args)
+            self.max_list = [
+                {'종목번호': '003550', '종목명': 'LG', '재무정보': 'https://finance.naver.com/item/main.nhn?code=003550',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=003550'},
+                {'종목번호': '051900', '종목명': 'LG생활건강', '재무정보': 'https://finance.naver.com/item/main.nhn?code=051900',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=051900'},
+                {'종목번호': '037710', '종목명': '광주신세계', '재무정보': 'https://finance.naver.com/item/main.nhn?code=037710',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=037710'},
+                {'종목번호': '192080', '종목명': '더블유게임즈', '재무정보': 'https://finance.naver.com/item/main.nhn?code=192080',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=192080'},
+                {'종목번호': '284740', '종목명': '쿠쿠홈시스', '재무정보': 'https://finance.naver.com/item/main.nhn?code=284740',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=284740'},
+                {'종목번호': '290380', '종목명': '대유', '재무정보': 'https://finance.naver.com/item/main.nhn?code=290380',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=290380'},
+                {'종목번호': '041920', '종목명': '메디아나', '재무정보': 'https://finance.naver.com/item/main.nhn?code=041920',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=041920'},
+                {'종목번호': '251630', '종목명': '브이원텍', '재무정보': 'https://finance.naver.com/item/main.nhn?code=251630',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=251630'},
+                {'종목번호': '335890', '종목명': '비올', '재무정보': 'https://finance.naver.com/item/main.nhn?code=335890',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=335890'},
+                {'종목번호': '094840', '종목명': '슈프리마에이치큐', '재무정보': 'https://finance.naver.com/item/main.nhn?code=094840',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=094840'},
+                {'종목번호': '052790', '종목명': '액토즈소프트', '재무정보': 'https://finance.naver.com/item/main.nhn?code=052790',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=052790'},
+                {'종목번호': '104830', '종목명': '원익머트리얼즈', '재무정보': 'https://finance.naver.com/item/main.nhn?code=104830',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=104830'},
+                {'종목번호': '078340', '종목명': '컴투스', '재무정보': 'https://finance.naver.com/item/main.nhn?code=078340',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=078340'},
+                {'종목번호': '030520', '종목명': '한글과컴퓨터', '재무정보': 'https://finance.naver.com/item/main.nhn?code=030520',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=030520'}]
 
             if self.max_list:
                 for item in self.max_list:

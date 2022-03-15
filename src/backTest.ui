@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1406</width>
-    <height>1024</height>
+    <width>978</width>
+    <height>688</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,10 +22,10 @@
   <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>40</y>
-     <width>1191</width>
-     <height>691</height>
+     <x>20</x>
+     <y>30</y>
+     <width>941</width>
+     <height>641</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -39,7 +39,7 @@
    </property>
    <widget class="QWidget" name="tab1">
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(114, 130, 139);</string>
+     <string notr="true"/>
     </property>
     <attribute name="title">
      <string>종목찾기</string>
@@ -47,7 +47,7 @@
     <widget class="QLabel" name="Result_label">
      <property name="geometry">
       <rect>
-       <x>770</x>
+       <x>560</x>
        <y>10</y>
        <width>171</width>
        <height>31</height>
@@ -80,7 +80,7 @@
      <property name="geometry">
       <rect>
        <x>410</x>
-       <y>600</y>
+       <y>570</y>
        <width>101</width>
        <height>26</height>
       </rect>
@@ -95,8 +95,8 @@
     <widget class="QPushButton" name="excel_download_button">
      <property name="geometry">
       <rect>
-       <x>850</x>
-       <y>600</y>
+       <x>820</x>
+       <y>570</y>
        <width>101</width>
        <height>26</height>
       </rect>
@@ -111,14 +111,31 @@
     <widget class="QTableWidget" name="itemTable">
      <property name="geometry">
       <rect>
-       <x>780</x>
+       <x>560</x>
        <y>40</y>
        <width>361</width>
-       <height>461</height>
+       <height>521</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
      <property name="styleSheet">
-      <string notr="true">background-color: rgb(238, 238, 238);</string>
+      <string notr="true">color: rgb(253, 253, 253);</string>
+     </property>
+     <property name="lineWidth">
+      <number>1</number>
+     </property>
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+     <property name="gridStyle">
+      <enum>Qt::SolidLine</enum>
      </property>
      <attribute name="horizontalHeaderCascadingSectionResizes">
       <bool>true</bool>
@@ -130,10 +147,35 @@
       <property name="text">
        <string>종목번호</string>
       </property>
+      <property name="background">
+       <color alpha="20">
+        <red>10</red>
+        <green>62</green>
+        <blue>85</blue>
+       </color>
+      </property>
+      <property name="foreground">
+       <brush brushstyle="NoBrush">
+        <color alpha="255">
+         <red>241</red>
+         <green>241</green>
+         <blue>241</blue>
+        </color>
+       </brush>
+      </property>
      </column>
      <column>
       <property name="text">
        <string>종목명</string>
+      </property>
+      <property name="foreground">
+       <brush brushstyle="NoBrush">
+        <color alpha="255">
+         <red>241</red>
+         <green>241</green>
+         <blue>241</blue>
+        </color>
+       </brush>
       </property>
      </column>
     </widget>
@@ -142,7 +184,7 @@
       <rect>
        <x>20</x>
        <y>30</y>
-       <width>751</width>
+       <width>491</width>
        <height>80</height>
       </rect>
      </property>
@@ -166,7 +208,7 @@
        <rect>
         <x>10</x>
         <y>20</y>
-        <width>711</width>
+        <width>471</width>
         <height>51</height>
        </rect>
       </property>
@@ -194,7 +236,7 @@
        <item>
         <widget class="QLabel" name="label_2">
          <property name="text">
-          <string>   </string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -231,9 +273,22 @@
         </widget>
        </item>
        <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>80</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
         <widget class="QLabel" name="label">
          <property name="text">
-          <string>                              </string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -257,10 +312,10 @@ color: rgb(0, 0, 0);</string>
     <widget class="QGroupBox" name="groupBox_3">
      <property name="geometry">
       <rect>
-       <x>30</x>
-       <y>410</y>
-       <width>481</width>
-       <height>151</height>
+       <x>20</x>
+       <y>420</y>
+       <width>491</width>
+       <height>141</height>
       </rect>
      </property>
      <property name="font">
@@ -281,47 +336,41 @@ color: rgb(0, 0, 0);</string>
      <widget class="QWidget" name="verticalLayoutWidget_2">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>30</y>
-        <width>301</width>
-        <height>101</height>
+        <x>10</x>
+        <y>29</y>
+        <width>471</width>
+        <height>92</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
+      <layout class="QFormLayout" name="formLayout_2">
+       <property name="horizontalSpacing">
+        <number>190</number>
+       </property>
+       <property name="verticalSpacing">
+        <number>15</number>
+       </property>
+       <item row="0" column="0">
         <widget class="QLabel" name="per_label">
          <property name="text">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;PER 평균(배) 미만 :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
-       <item>
+       <item row="1" column="0">
         <widget class="QLabel" name="dept_label">
          <property name="text">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;평균 부채비율(%) 미만 :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
-       <item>
+       <item row="2" column="0">
         <widget class="QLabel" name="margin_label">
          <property name="text">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;평균 영업이익률(%) 이상 :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="verticalLayoutWidget_4">
-      <property name="geometry">
-       <rect>
-        <x>360</x>
-        <y>30</y>
-        <width>111</width>
-        <height>101</height>
-       </rect>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <item>
+       <item row="0" column="1">
         <widget class="QLineEdit" name="per_edit">
          <property name="styleSheet">
           <string notr="true">background-color: rgb(255, 255, 255);
@@ -332,7 +381,7 @@ color: rgb(0, 0, 0);</string>
          </property>
         </widget>
        </item>
-       <item>
+       <item row="1" column="1">
         <widget class="QLineEdit" name="dept_edit">
          <property name="styleSheet">
           <string notr="true">background-color: rgb(255, 255, 255);
@@ -343,7 +392,7 @@ color: rgb(0, 0, 0);</string>
          </property>
         </widget>
        </item>
-       <item>
+       <item row="2" column="1">
         <widget class="QLineEdit" name="margin_edit">
          <property name="styleSheet">
           <string notr="true">background-color: rgb(255, 255, 255);
@@ -362,8 +411,8 @@ color: rgb(0, 0, 0);</string>
       <rect>
        <x>20</x>
        <y>140</y>
-       <width>751</width>
-       <height>271</height>
+       <width>491</width>
+       <height>251</height>
       </rect>
      </property>
      <property name="font">
@@ -380,55 +429,42 @@ color: rgb(0, 0, 0);</string>
      <property name="title">
       <string>주가</string>
      </property>
-     <widget class="QWidget" name="gridLayoutWidget">
+     <widget class="QWidget" name="gridLayoutWidget_2">
       <property name="geometry">
        <rect>
-        <x>30</x>
-        <y>40</y>
-        <width>691</width>
-        <height>201</height>
+        <x>10</x>
+        <y>20</y>
+        <width>471</width>
+        <height>211</height>
        </rect>
       </property>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="3" column="3">
-        <widget class="QRadioButton" name="radioButton_6">
+      <layout class="QGridLayout" name="gridLayout_2">
+       <property name="sizeConstraint">
+        <enum>QLayout::SetDefaultConstraint</enum>
+       </property>
+       <property name="spacing">
+        <number>5</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="QLabel" name="search_duration_label">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;종목 검색 기간 :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QRadioButton" name="radioButton_4">
          <property name="font">
           <font>
            <pointsize>8</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>월</string>
+          <string>월 이내</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="lowest_contrast_label_3">
-         <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;최저 가격 대비 최저 기간 평균가격 배수 :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="max_vol_within_label_3">
-         <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;최대 거래량 발생 시점 :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="2">
-        <widget class="QRadioButton" name="radioButton_7">
-         <property name="font">
-          <font>
-           <pointsize>8</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>이상</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="2">
+       <item row="1" column="2">
         <widget class="QRadioButton" name="radioButton_3">
          <property name="font">
           <font>
@@ -441,19 +477,7 @@ color: rgb(0, 0, 0);</string>
         </widget>
        </item>
        <item row="2" column="3">
-        <widget class="QRadioButton" name="radioButton_4">
-         <property name="font">
-          <font>
-           <pointsize>8</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>월 이내</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="3">
-        <widget class="QRadioButton" name="radioButton_2">
+        <widget class="QRadioButton" name="radioButton_6">
          <property name="font">
           <font>
            <pointsize>8</pointsize>
@@ -464,38 +488,14 @@ color: rgb(0, 0, 0);</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="2">
-        <widget class="QRadioButton" name="radioButton">
-         <property name="font">
-          <font>
-           <pointsize>8</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>년</string>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="search_duration_label_3">
+        <widget class="QLabel" name="max_vol_within_label">
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;종목 검색 기간 :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;최대 거래량 발생 시점 :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="3">
-        <widget class="QRadioButton" name="radioButton_8">
-         <property name="font">
-          <font>
-           <pointsize>8</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>이하</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="2">
+       <item row="2" column="2">
         <widget class="QRadioButton" name="radioButton_5">
          <property name="font">
           <font>
@@ -507,15 +507,39 @@ color: rgb(0, 0, 0);</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="lowest_duration_label_3">
+       <item row="0" column="3">
+        <widget class="QRadioButton" name="radioButton_2">
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>월</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QRadioButton" name="radioButton">
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>년</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="lowest_duration_label">
          <property name="text">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;최저가 기간 :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="search_duration_edit_3">
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="search_duration_edit">
          <property name="layoutDirection">
           <enum>Qt::LeftToRight</enum>
          </property>
@@ -532,7 +556,7 @@ color: rgb(0, 0, 0);</string>
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QLineEdit" name="search_duration_edit_4">
+        <widget class="QLineEdit" name="lowest_duration_edit">
          <property name="layoutDirection">
           <enum>Qt::LeftToRight</enum>
          </property>
@@ -545,11 +569,35 @@ color: rgb(0, 0, 0);</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="max_vol_within_edit">
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(255, 255, 255);
+color: rgb(0, 0, 0);</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="lowest_contrast_label">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;최저 가격 대비 최저 기간 평균가격 배수 :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="QLineEdit" name="search_duration_edit_5">
+        <widget class="QLineEdit" name="lowest_contrast_edit">
          <property name="layoutDirection">
           <enum>Qt::LeftToRight</enum>
          </property>
@@ -565,20 +613,27 @@ color: rgb(0, 0, 0);</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
-        <widget class="QLineEdit" name="search_duration_edit_6">
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
+       <item row="3" column="2">
+        <widget class="QRadioButton" name="radioButton_7">
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
          </property>
-         <property name="autoFillBackground">
-          <bool>false</bool>
+         <property name="text">
+          <string>이상</string>
          </property>
-         <property name="styleSheet">
-          <string notr="true">background-color: rgb(255, 255, 255);
-color: rgb(0, 0, 0);</string>
+        </widget>
+       </item>
+       <item row="3" column="3">
+        <widget class="QRadioButton" name="radioButton_8">
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
          </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <property name="text">
+          <string>이하</string>
          </property>
         </widget>
        </item>
