@@ -15,6 +15,8 @@ import tkinter as tk
 from tkinter import filedialog
 import pandas as pd
 
+from backtestImpl import find_maxvol_mon
+
 form_class = uic.loadUiType("backTest.ui")[0]
 
 
@@ -28,10 +30,10 @@ class WindowClass(QMainWindow, form_class):
         self.search_button.clicked.connect(self.search_clicked)
         self.excel_download_button.clicked.connect(self.download_clicked)
 
-        self.today_radioButton.clicked.connect(self.radFunction)
-        self.predate_radioButton.clicked.connect(self.radFunction)
-        self.year_radioButton.clicked.connect(self.radFunction)
-        self.month_radioButton.clicked.connect(self.radFunction)
+        self.today_radioButton.clicked.connect(self.radfunction)
+        self.predate_radioButton.clicked.connect(self.radfunction)
+        self.year_radioButton.clicked.connect(self.radfunction)
+        self.month_radioButton.clicked.connect(self.radfunction)
 
         # default value
         self.today_radioButton.setChecked(True)
@@ -42,8 +44,6 @@ class WindowClass(QMainWindow, form_class):
         self.s_year_radioButton.setChecked(True)
         self.o_month_radioButton.setChecked(True)
         self.l_year_radioButton.setChecked(True)
-        self.c_low_radioButton.setChecked(True)
-
 
         self.max_list = []
         self.base_date = ""
@@ -69,7 +69,8 @@ class WindowClass(QMainWindow, form_class):
             self.itemTable.setRowCount(0)
 
             args = self.get_edit_text()
-            # self.max_list: list[dict[str, str]] = find_maxvol_mon(args)
+            self.max_list: list[dict[str, str]] = find_maxvol_mon(args)
+            """
             self.max_list = [
                 {'종목번호': '003550', '종목명': 'LG', '재무정보': 'https://finance.naver.com/item/main.nhn?code=003550',
                  '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=003550'},
@@ -99,6 +100,7 @@ class WindowClass(QMainWindow, form_class):
                  '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=078340'},
                 {'종목번호': '030520', '종목명': '한글과컴퓨터', '재무정보': 'https://finance.naver.com/item/main.nhn?code=030520',
                  '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=030520'}]
+            """
 
             if self.max_list:
                 for item in self.max_list:
@@ -146,42 +148,38 @@ class WindowClass(QMainWindow, form_class):
     def get_edit_text(self):
         """
             text edit 값 가져오기
-        :return: dict = {search_duration, max_vol_within, lowest_duration, lowest_contrast,
+        :return: dict = {base_date, search_duration, max_vol_within, lowest_duration, lowest_contrast,
         per_rate, dept_rate, margin_rate}
         """
+        # 기준일
+        today = date.today()
+        if self.today_radioButton.isChecked():
+            base_date = self.base_date_edit.text().strptime("%Y%m%d")
+        elif self.predate_radioButton.isChecked() and self.year_radioButton.isChecked():
+            base_date = today - relativedelta(years=int(self.base_date_edit.text()))
+        elif self.predate_radioButton.isChecked() and self.month_radioButton.isChecked():
+            base_date = today - relativedelta(months=int(self.base_date_edit.text()))
 
-        search_duration = self.search_duration_edit.text()
-        lowest_duration = self.lowest_duration_edit.text()
+        # 종목 검색 기간
+        if self.s_year_radioButton.isChecked():
+            search_duration = int(self.search_duration_edit.text()) * 12
+        elif self.s_month_radioButton.isChecked():
+            search_duration = int(self.search_duration_edit.text())
+
+        if self.o_year_radioButton.isChecked():
+            max_vol_within = int(self.max_vol_within_edit.text()) * 12
+        elif self.o_month_radioButton.isChecked():
+            max_vol_within = int(self.max_vol_within_edit.text())
+
+        if self.l_year_radioButton.isChecked():
+            lowest_duration = int(self.lowest_duration_edit.text()) * 12
+        elif self.l_month_radioButton.isChecked():
+            lowest_duration = int(self.lowest_duration_edit.text())
         lowest_contrast = self.lowest_contrast_edit.text()
-        max_vol_within = self.max_vol_within_edit.text()
 
         per_rate = self.per_edit.text()
         dept_rate = self.dept_edit.text()
         margin_rate = self.margin_edit.text()
-
-        # button check
-        if self.today_radioButton.isChecked():
-            base_date = self.base_date_edit.text()
-
-        if self.s_year_radioButton.isChecked():
-            s_year = True
-        elif self.s_month_radioButton.isChecked():
-            s_year = False
-
-        if self.o_year_radioButton.isChecked():
-            o_year = True
-        elif self.o_month_radioButton.isChecked():
-            o_year = False
-
-        if self.l_year_radioButton.isChecked():
-            l_year = True
-        elif self.l_month_radioButton.isChecked():
-            l_year = False
-
-        if self.c_gra_radioButton.isChecked():
-            c_gra = True
-        elif self.c_low_radioButton.isChecked():
-            c_gra = False
 
         edit_text_list = {"base_date": base_date, "search_duration": search_duration,
                           "max_vol_within": max_vol_within, "lowest_duration": lowest_duration,
@@ -190,11 +188,14 @@ class WindowClass(QMainWindow, form_class):
 
         return edit_text_list
 
-    def radFunction(self):
+    def radfunction(self):
         if self.today_radioButton.isChecked():
             self.base_date_edit.setText(date.today().strftime("%Y%m%d"))
             self.year_radioButton.hide()
             self.month_radioButton.hide()
+            
+            self.day_label.setText("일")
+
             # self.base_date = date.today().strftime("%Y%m%d")
         elif self.predate_radioButton.isChecked():
             self.base_date_edit.setText("")
@@ -202,7 +203,9 @@ class WindowClass(QMainWindow, form_class):
             self.year_radioButton.show()
             self.month_radioButton.show()
 
-            self.year_radioButton.setChecked(True)
+            # self.year_radioButton.setChecked(True)
+
+            self.day_label.setText("이전")
 
             # if self.year_radioButton.isChecked():
             #     self.base_date = date.today() - relativedelta(years=int(self.base_date_edit.text()))

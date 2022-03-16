@@ -21,16 +21,16 @@ def find_maxvol_mon(args):
 
         최대 거래량 찾기 (월)
 
-    :param args: dict = {search_duration, max_vol_occur, lowest_duration, lowest_contrast, per_rate,
+    :param args: dict = {base_date, search_duration, max_vol_occur, lowest_duration, lowest_contrast, per_rate,
     dept_rate, margin_rate}
     :return: max_tick
     """
     today = date.today()
-    search_start_date = today - relativedelta(years=int(args['search_duration']))
+    search_start_date = today - relativedelta(months=int(args['search_duration']))
 
     # 전종목 조회하기
-    kospi_market = stock.get_market_ticker_list(date=today, market="KOSPI")
-    kosdaq_market = stock.get_market_ticker_list(date=today, market="KOSDAQ")
+    kospi_market = stock.get_market_ticker_list(date=args['base_date'], market="KOSPI")
+    kosdaq_market = stock.get_market_ticker_list(date=args['base_date'], market="KOSDAQ")
     total_market = kospi_market + kosdaq_market
     # total_market = ['000590']
     halt_list = trading_halt_list()
@@ -40,7 +40,7 @@ def find_maxvol_mon(args):
     for code in total_market:
         logger.info('[%s] - 시세 조회', code)
         # 종목별 시세 조회
-        df = stock.get_market_ohlcv(search_start_date.strftime("%Y%m%d"), today.strftime("%Y%m%d"), code)
+        df = stock.get_market_ohlcv(search_start_date.strftime("%Y%m%d"), args['base_date'].strftime("%Y%m%d"), code)
         # df = df.resample('M').last()  # 월로 변경
 
         base_day_price = int(df['종가'].iloc[-1])
@@ -63,7 +63,8 @@ def find_maxvol_mon(args):
         max_vol_date = df['거래량'].idxmax()
         max_vol_price = df.loc[max_vol_date]['종가']
 
-        subset_df = df.iloc[-(int(args['search_duration']) * 13):]  # 최저가 기간
+        # 최저가 기간 - 월로 계산해서 넘겨줌
+        subset_df = df.iloc[-(int(args['lowest_duration']) * 30):]
         lowest_price_day = subset_df['종가'].idxmin()  # 최저가 날짜
         lowest_price = subset_df.loc[lowest_price_day]['종가']  # 최저가 가격
         subset_df_avg = subset_df['종가'].mean()
