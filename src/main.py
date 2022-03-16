@@ -24,6 +24,7 @@ class WindowClass(QMainWindow, form_class):
         super().__init__()
         self.setupUi(self)
 
+        # 이벤트 연결
         self.search_button.clicked.connect(self.search_clicked)
         self.excel_download_button.clicked.connect(self.download_clicked)
 
@@ -32,8 +33,17 @@ class WindowClass(QMainWindow, form_class):
         self.year_radioButton.clicked.connect(self.radFunction)
         self.month_radioButton.clicked.connect(self.radFunction)
 
+        # default value
+        self.today_radioButton.setChecked(True)
+        self.base_date_edit.setText(date.today().strftime("%Y%m%d"))
         self.year_radioButton.hide()
         self.month_radioButton.hide()
+
+        self.s_year_radioButton.setChecked(True)
+        self.o_month_radioButton.setChecked(True)
+        self.l_year_radioButton.setChecked(True)
+        self.c_low_radioButton.setChecked(True)
+
 
         self.max_list = []
         self.base_date = ""
@@ -139,6 +149,7 @@ class WindowClass(QMainWindow, form_class):
         :return: dict = {search_duration, max_vol_within, lowest_duration, lowest_contrast,
         per_rate, dept_rate, margin_rate}
         """
+
         search_duration = self.search_duration_edit.text()
         lowest_duration = self.lowest_duration_edit.text()
         lowest_contrast = self.lowest_contrast_edit.text()
@@ -148,9 +159,34 @@ class WindowClass(QMainWindow, form_class):
         dept_rate = self.dept_edit.text()
         margin_rate = self.margin_edit.text()
 
-        edit_text_list = {"search_duration": search_duration, "max_vol_within": max_vol_within,
-                          "lowest_duration": lowest_duration, "lowest_contrast": lowest_contrast,
-                          "per_rate": per_rate, "dept_rate": dept_rate, "margin_rate": margin_rate}
+        # button check
+        if self.today_radioButton.isChecked():
+            base_date = self.base_date_edit.text()
+
+        if self.s_year_radioButton.isChecked():
+            s_year = True
+        elif self.s_month_radioButton.isChecked():
+            s_year = False
+
+        if self.o_year_radioButton.isChecked():
+            o_year = True
+        elif self.o_month_radioButton.isChecked():
+            o_year = False
+
+        if self.l_year_radioButton.isChecked():
+            l_year = True
+        elif self.l_month_radioButton.isChecked():
+            l_year = False
+
+        if self.c_gra_radioButton.isChecked():
+            c_gra = True
+        elif self.c_low_radioButton.isChecked():
+            c_gra = False
+
+        edit_text_list = {"base_date": base_date, "search_duration": search_duration,
+                          "max_vol_within": max_vol_within, "lowest_duration": lowest_duration,
+                          "lowest_contrast": lowest_contrast, "per_rate": per_rate,
+                          "dept_rate": dept_rate, "margin_rate": margin_rate}
 
         return edit_text_list
 
@@ -165,6 +201,9 @@ class WindowClass(QMainWindow, form_class):
 
             self.year_radioButton.show()
             self.month_radioButton.show()
+
+            self.year_radioButton.setChecked(True)
+
             # if self.year_radioButton.isChecked():
             #     self.base_date = date.today() - relativedelta(years=int(self.base_date_edit.text()))
             # elif self.month_radioButton.isChecked():
