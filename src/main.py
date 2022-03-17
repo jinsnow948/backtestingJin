@@ -5,8 +5,8 @@ import logging.config
 import json
 from datetime import date, datetime
 
-from PyQt5.QtCore import Qt, QPoint, QThread, pyqtSlot
-from PyQt5.QtGui import QIcon, QCursor
+from PyQt5.QtCore import Qt, QThread
+from PyQt5.QtGui import QIcon
 from dateutil.relativedelta import relativedelta
 
 from PyQt5.QtWidgets import *
@@ -16,11 +16,7 @@ import tkinter as tk
 from tkinter import filedialog
 import pandas as pd
 
-from pykrx import stock
-import plotly.graph_objects as go
-import plotly.subplots as ms
-
-from backtestImpl import find_maxvol_mon
+from backtestImpl import find_maxvol_mon, make_chart
 
 form_class = uic.loadUiType("backTest.ui")[0]
 
@@ -34,13 +30,13 @@ class Thread(QThread):
 
     def run(self):
         try:
-            self.parent.progressBar.setValue(0)
+            self.parent.progressBar.show()
             self.parent.search_button.setDisabled(True)
             self.parent.excel_download_button.setDisabled(True)
-            self.parent.progressBar.show()
             self.parent.itemTable.setRowCount(0)
             args = self.parent.get_edit_text()
-            # self.parent.max_list: list[dict[str, str]] = find_maxvol_mon(self.parent, args)
+            self.parent.max_list: list[dict[str, str]] = find_maxvol_mon(self.parent, args)
+            """
             self.parent.max_list = [
                 {'종목번호': '003550', '종목명': 'LG', '재무정보': 'https://finance.naver.com/item/main.nhn?code=003550',
                  '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=003550'},
@@ -78,6 +74,7 @@ class Thread(QThread):
                 {'종목번호': '030520', '종목명': '한글과컴퓨터',
                  '재무정보': 'https://finance.naver.com/item/main.nhn?code=030520',
                  '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=030520'}]
+            """
 
             if self.parent.max_list:
                 for item in self.parent.max_list:
@@ -87,6 +84,8 @@ class Thread(QThread):
                     self.parent.itemTable.setItem(row, 1, QTableWidgetItem(item['종목명']))
             self.parent.search_button.setEnabled(True)
             self.parent.excel_download_button.setEnabled(True)
+            self.parent.progressBar.hide()
+
         except Exception as e:
             logger.error(e)
 
@@ -167,9 +166,10 @@ class WindowClass(QMainWindow, form_class):
         df = pd.DataFrame(self.max_list)
 
         df2 = pd.DataFrame(data=self.get_edit_text(), index=['입력값'])
-        df2 = df2.rename(columns={"search_duration": "종목 검색 기간", "max_vol_within": "N개월 이내 최대 거래량",
-                                  "lowest_duration": "N년 최저가", "lowest_contrast": "최저가 기간 평균 대비 최저가 배수",
-                                  "per_rate": "PER 평균", "dept_rate": "부채비율", "margin_rate": "평균 영업이익률"})
+        df2 = df2.rename(columns={"base_date": "기준일", "search_duration": "종목 검색 기간",
+                                  "max_vol_within": "N개월 이내 최대 거래량", "lowest_duration": "N년 최저가",
+                                  "lowest_contrast": "최저가 기간 평균 대비 최저가 배수", "per_rate": "PER 평균",
+                                  "dept_rate": "부채비율", "margin_rate": "평균 영업이익률"})
 
         try:
             df2 = (df2.T)
@@ -187,51 +187,30 @@ class WindowClass(QMainWindow, form_class):
 
     def eventFilter(self, source, event):
         try:
+            args = self.get_edit_text()
 
             if (event.type() == QtCore.QEvent.MouseButtonPress and
                     event.buttons() == QtCore.Qt.RightButton and
                     source is self.itemTable.viewport()):
+                menu = QMenu(self)
                 item = self.itemTable.itemAt(event.pos())
-                print('Global Pos:', event.globalPos())
-                if item is not None:
-                    print('Table Item:', item.row(), item.column())
-                    self.menu = QMenu(self)
-                    self.menu.addAction(item.text())  # (QAction('test'))
-                    # menu.exec_(event.globalPos())
+                if item is not None and item.column() == 0:
+                    chart_action = menu.addAction("차트 보기")  # (QAction('test'))
+                    action = menu.exec_(event.globalPos())
+                    logger.debug('Global Pos: %s', event.globalPos())
+                    if chart_action == action:
+                        logger.debug('row: %d, column: %d', item.row(), item.column())
+                        logger.debug('item : %s', item.text())
+                        make_chart(args, item.text())
+                        # menu.exec_(event.globalPos())
         except Exception as e:
             logger.error(e)
         return super(QMainWindow, self).eventFilter(source, event)
 
     def generateMenu(self, pos):
-        print("pos======", pos)
+        logger.debug("pos======", pos)
         try:
             self.menu.exec_(self.itemTable.mapToGlobal(pos))
-        except Exception as e:
-            logger.error(e)
-
-    def contextMenuEvent(self, pos):
-        if self.selectionModel().selection().indexes():
-            for i in self.selectionModel().selection().indexes():
-                row, column = i.row(), i.column()
-            menu = QMenu()
-            openAction = menu.addAction("Open")
-            action = menu.exec_(self.mapToGlobal(pos))
-            if action == openAction:
-                self.openAction(row, column)
-
-
-    def chartSlot(self, event):
-        try:
-            # get the selected row and column
-            row = self.itemTable.rowAt(event.pos().y())
-            col = self.itemTable.columnAt(event.pos().x())
-            # get the selected cell
-            cell = self.itemTable.item(row, col)
-            # get the text inside selected cell (if any)
-            cellText = cell.text()
-            logger.debug(cellText)
-            # get the widget inside selected cell (if any)
-            widget = self.tableWidget.cellWidget(row, col)
         except Exception as e:
             logger.error(e)
 
@@ -315,57 +294,6 @@ class WindowClass(QMainWindow, form_class):
             #     self.base_date = date.today() - relativedelta(years=int(self.base_date_edit.text()))
             # elif self.month_radioButton.isChecked():
             #     self.base_date = date.today() - relativedelta(years=int(self.base_date_edit.text()))
-
-    def make_chart(self, pre_months, code):
-        """
-            차트 그리기
-        :param pre_months: 이전 월
-        :param code: 종목 번호
-        :return: 차트 결과값 반환환
-        """
-
-        KOSPI = "1001"
-        KOSDAQ = "2001"
-
-        today = datetime.today()
-        chart_base_day = today - relativedelta(months=pre_months)
-        # 차트 그리기 위한 시세조회
-        if code == KOSPI or code == KOSDAQ:
-            df = stock.get_index_ohlcv(chart_base_day.strftime("%Y%m%d"), today.strftime("%Y%m%d"), code)
-            tick_name = stock.get_index_ticker_name(code)
-        else:
-            df = stock.get_market_ohlcv(chart_base_day.strftime("%Y%m%d"), today.strftime("%Y%m%d"), code)
-            tick_name = stock.get_market_ticker_name(code)
-        df = df.astype(int)
-
-        # 캔들 차트 객체 생성
-        candle = go.Candlestick(
-            x=df.index,
-            open=df['시가'],
-            high=df['고가'],
-            low=df['저가'],
-            close=df['종가'],
-            increasing_line_color='red',  # 상승봉 스타일링
-            decreasing_line_color='blue'  # 하락봉 스타일링
-        )
-
-        # 바 차트(거래량) 객체 생성
-        volume_bar = go.Bar(x=df.index, y=df['거래량'])
-
-        fig = ms.make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.02)
-
-        fig.add_trace(candle, row=1, col=1)
-        fig.add_trace(volume_bar, row=2, col=1)
-
-        fig.update_layout(
-            title=tick_name,
-            yaxis1_title='가격',
-            yaxis2_title='거래량',
-            xaxis2_title='기간',
-            xaxis1_rangeslider_visible=False,
-            xaxis2_rangeslider_visible=True,
-        )
-        fig.show()
 
 
 # 스크립트를 실행하려면 여백의 녹색 버튼을 누릅니다.

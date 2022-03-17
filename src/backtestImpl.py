@@ -11,13 +11,16 @@ import json
 
 import pandas as pd
 
+import plotly.graph_objects as go
+import plotly.subplots as ms
+
 with open('../config/logger.json') as f:
     config = json.load(f)
 logging.config.dictConfig(config)
 logger = logging.getLogger('logger-1')
 
 
-def find_maxvol_mon(window , args):
+def find_maxvol_mon(window, args):
     """
 
         최대 거래량 찾기 (월)
@@ -44,8 +47,8 @@ def find_maxvol_mon(window , args):
         try:
             i += 1
             total_count = len(total_market)
-            progress_count = math.trunc(i/total_count*100)
-            logger.debug(f'======== total count : {len(total_market)}, count : { i }, '
+            progress_count = math.trunc(i / total_count * 100)
+            logger.debug(f'======== total count : {len(total_market)}, count : {i}, '
                          f'progress : {progress_count} =======')
             if pre_prgress_count < progress_count:
                 pre_prgress_count = progress_count
@@ -79,6 +82,8 @@ def find_maxvol_mon(window , args):
 
         # 최저가 기간 - 월로 계산해서 넘겨줌
         subset_df = df.iloc[-(int(args['lowest_duration']) * 30):]
+        logger.debug('================== 최저가 기간의 dataframe =====================')
+        logger.debug(subset_df)
         lowest_price_day = subset_df['종가'].idxmin()  # 최저가 날짜
         lowest_price = subset_df.loc[lowest_price_day]['종가']  # 최저가 가격
         subset_df_avg = subset_df['종가'].mean()
@@ -171,3 +176,56 @@ def management_list():
             stoplist.append(item.text.split('\n')[2])
 
     return stoplist
+
+
+def make_chart(args, code):
+    """
+        차트 그리기
+    :param args: input list
+    :param code: 종목 번호
+    :return: 차트 결과값 반환환
+    """
+
+    KOSPI = "1001"
+    KOSDAQ = "2001"
+
+    today = date.today()
+    pre_date = today - relativedelta(months=args['search_duration'])
+
+    # 차트 그리기 위한 시세조회
+    if code == KOSPI or code == KOSDAQ:
+        df = stock.get_index_ohlcv(pre_date.strftime("%Y%m%d"), args['base_date'].strftime("%Y%m%d"), code)
+        tick_name = stock.get_index_ticker_name(code)
+    else:
+        df = stock.get_market_ohlcv(pre_date.strftime("%Y%m%d"), args['base_date'].strftime("%Y%m%d"), code)
+        tick_name = stock.get_market_ticker_name(code)
+    df = df.astype(int)
+
+    # 캔들 차트 객체 생성
+    candle = go.Candlestick(
+        x=df.index,
+        open=df['시가'],
+        high=df['고가'],
+        low=df['저가'],
+        close=df['종가'],
+        increasing_line_color='red',  # 상승봉 스타일링
+        decreasing_line_color='blue'  # 하락봉 스타일링
+    )
+
+    # 바 차트(거래량) 객체 생성
+    volume_bar = go.Bar(x=df.index, y=df['거래량'])
+
+    fig = ms.make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.02)
+
+    fig.add_trace(candle, row=1, col=1)
+    fig.add_trace(volume_bar, row=2, col=1)
+
+    fig.update_layout(
+        title=tick_name,
+        yaxis1_title='가격',
+        yaxis2_title='거래량',
+        xaxis2_title='기간',
+        xaxis1_rangeslider_visible=False,
+        xaxis2_rangeslider_visible=True,
+    )
+    fig.show()
