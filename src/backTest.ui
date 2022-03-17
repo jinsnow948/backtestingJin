@@ -10,6 +10,13 @@
     <height>749</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>Algerian</family>
+    <weight>50</weight>
+    <bold>false</bold>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Jinstock</string>
   </property>
@@ -219,7 +226,7 @@ color: rgb(238, 238, 238);
        <rect>
         <x>10</x>
         <y>30</y>
-        <width>141</width>
+        <width>191</width>
         <height>41</height>
        </rect>
       </property>
@@ -249,7 +256,7 @@ color: rgb(238, 238, 238);
      <widget class="QWidget" name="horizontalLayoutWidget_5">
       <property name="geometry">
        <rect>
-        <x>160</x>
+        <x>220</x>
         <y>30</y>
         <width>111</width>
         <height>41</height>
@@ -318,7 +325,7 @@ color: rgb(0, 0, 0);</string>
         <widget class="QLabel" name="day_label">
          <property name="minimumSize">
           <size>
-           <width>19</width>
+           <width>40</width>
            <height>0</height>
           </size>
          </property>
@@ -328,32 +335,6 @@ color: rgb(0, 0, 0);</string>
         </widget>
        </item>
       </layout>
-     </widget>
-     <widget class="QLabel" name="label_2">
-      <property name="geometry">
-       <rect>
-        <x>145</x>
-        <y>31</y>
-        <width>16</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label">
-      <property name="geometry">
-       <rect>
-        <x>237</x>
-        <y>31</y>
-        <width>16</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
      </widget>
     </widget>
     <widget class="QGroupBox" name="groupBox_3">
@@ -386,7 +367,7 @@ color: rgb(0, 0, 0);</string>
         <x>10</x>
         <y>29</y>
         <width>631</width>
-        <height>92</height>
+        <height>107</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout">
@@ -848,6 +829,39 @@ color: rgb(0, 0, 0);</string>
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QProgressBar" name="progressBar">
+   <property name="geometry">
+    <rect>
+     <x>960</x>
+     <y>710</y>
+     <width>221</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial Rounded MT Bold</family>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QProgressBar
+{
+border: solid grey;
+border-radius: 15px;
+color: white;
+}
+QProgressBar::chunk 
+{
+background-color: #05B8CC;
+border-radius :15px;
+}      </string>
+   </property>
+   <property name="value">
+    <number>24</number>
+   </property>
   </widget>
  </widget>
  <resources/>

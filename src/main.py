@@ -3,21 +3,92 @@ import sys
 
 import logging.config
 import json
-from datetime import date
+from datetime import date, datetime
 
-from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import Qt, QPoint, QThread, pyqtSlot
+from PyQt5.QtGui import QIcon, QCursor
 from dateutil.relativedelta import relativedelta
 
 from PyQt5.QtWidgets import *
-from PyQt5 import uic
+from PyQt5 import uic, QtCore
 
 import tkinter as tk
 from tkinter import filedialog
 import pandas as pd
 
+from pykrx import stock
+import plotly.graph_objects as go
+import plotly.subplots as ms
+
 from backtestImpl import find_maxvol_mon
 
 form_class = uic.loadUiType("backTest.ui")[0]
+
+
+# 쓰레드 선언
+class Thread(QThread):
+
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.parent = parent
+
+    def run(self):
+        try:
+            self.parent.progressBar.setValue(0)
+            self.parent.search_button.setDisabled(True)
+            self.parent.excel_download_button.setDisabled(True)
+            self.parent.progressBar.show()
+            self.parent.itemTable.setRowCount(0)
+            args = self.parent.get_edit_text()
+            # self.parent.max_list: list[dict[str, str]] = find_maxvol_mon(self.parent, args)
+            self.parent.max_list = [
+                {'종목번호': '003550', '종목명': 'LG', '재무정보': 'https://finance.naver.com/item/main.nhn?code=003550',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=003550'},
+                {'종목번호': '051900', '종목명': 'LG생활건강',
+                 '재무정보': 'https://finance.naver.com/item/main.nhn?code=051900',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=051900'},
+                {'종목번호': '037710', '종목명': '광주신세계',
+                 '재무정보': 'https://finance.naver.com/item/main.nhn?code=037710',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=037710'},
+                {'종목번호': '192080', '종목명': '더블유게임즈',
+                 '재무정보': 'https://finance.naver.com/item/main.nhn?code=192080',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=192080'},
+                {'종목번호': '284740', '종목명': '쿠쿠홈시스',
+                 '재무정보': 'https://finance.naver.com/item/main.nhn?code=284740',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=284740'},
+                {'종목번호': '290380', '종목명': '대유', '재무정보': 'https://finance.naver.com/item/main.nhn?code=290380',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=290380'},
+                {'종목번호': '041920', '종목명': '메디아나', '재무정보': 'https://finance.naver.com/item/main.nhn?code=041920',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=041920'},
+                {'종목번호': '251630', '종목명': '브이원텍', '재무정보': 'https://finance.naver.com/item/main.nhn?code=251630',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=251630'},
+                {'종목번호': '335890', '종목명': '비올', '재무정보': 'https://finance.naver.com/item/main.nhn?code=335890',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=335890'},
+                {'종목번호': '094840', '종목명': '슈프리마에이치큐',
+                 '재무정보': 'https://finance.naver.com/item/main.nhn?code=094840',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=094840'},
+                {'종목번호': '052790', '종목명': '액토즈소프트',
+                 '재무정보': 'https://finance.naver.com/item/main.nhn?code=052790',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=052790'},
+                {'종목번호': '104830', '종목명': '원익머트리얼즈',
+                 '재무정보': 'https://finance.naver.com/item/main.nhn?code=104830',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=104830'},
+                {'종목번호': '078340', '종목명': '컴투스', '재무정보': 'https://finance.naver.com/item/main.nhn?code=078340',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=078340'},
+                {'종목번호': '030520', '종목명': '한글과컴퓨터',
+                 '재무정보': 'https://finance.naver.com/item/main.nhn?code=030520',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=030520'}]
+
+            if self.parent.max_list:
+                for item in self.parent.max_list:
+                    row = self.parent.itemTable.rowCount()
+                    self.parent.itemTable.insertRow(row)
+                    self.parent.itemTable.setItem(row, 0, QTableWidgetItem(item['종목번호']))
+                    self.parent.itemTable.setItem(row, 1, QTableWidgetItem(item['종목명']))
+            self.parent.search_button.setEnabled(True)
+            self.parent.excel_download_button.setEnabled(True)
+        except Exception as e:
+            logger.error(e)
 
 
 # 화면을 띄우는데 사용되는 Class 선언
@@ -34,6 +105,20 @@ class WindowClass(QMainWindow, form_class):
         self.predate_radioButton.clicked.connect(self.radfunction)
         self.year_radioButton.clicked.connect(self.radfunction)
         self.month_radioButton.clicked.connect(self.radfunction)
+
+        # self.itemTable.setContextMenuPolicy(Qt.CustomContextMenu)
+        # self.itemTable.customContextMenuRequested.connect(self.contextMenuEvent)
+        # self.itemTable.viewport().installEventFilter(self)
+        try:
+            ### This property holds how the widget shows a context menu
+            self.itemTable.setContextMenuPolicy(Qt.CustomContextMenu)  # +++
+            ### This signal is emitted when the widget's contextMenuPolicy is Qt::CustomContextMenu,
+            ### and the user has requested a context menu on the widget.
+            self.itemTable.customContextMenuRequested.connect(self.generateMenu)  # +++
+            self.itemTable.viewport().installEventFilter(self)
+
+        except Exception as e:
+            logger.error(e)
 
         # default value
         self.today_radioButton.setChecked(True)
@@ -60,56 +145,11 @@ class WindowClass(QMainWindow, form_class):
         self.dept_edit.setText('100')
         self.margin_edit.setText('15')
 
+        self.progressBar.hide()
+
     def search_clicked(self):
-        """
-            종목 찾기 버튼 클릭
-        :return:
-        """
-        try:
-            self.itemTable.setRowCount(0)
-
-            args = self.get_edit_text()
-            self.max_list: list[dict[str, str]] = find_maxvol_mon(args)
-            """
-            self.max_list = [
-                {'종목번호': '003550', '종목명': 'LG', '재무정보': 'https://finance.naver.com/item/main.nhn?code=003550',
-                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=003550'},
-                {'종목번호': '051900', '종목명': 'LG생활건강', '재무정보': 'https://finance.naver.com/item/main.nhn?code=051900',
-                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=051900'},
-                {'종목번호': '037710', '종목명': '광주신세계', '재무정보': 'https://finance.naver.com/item/main.nhn?code=037710',
-                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=037710'},
-                {'종목번호': '192080', '종목명': '더블유게임즈', '재무정보': 'https://finance.naver.com/item/main.nhn?code=192080',
-                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=192080'},
-                {'종목번호': '284740', '종목명': '쿠쿠홈시스', '재무정보': 'https://finance.naver.com/item/main.nhn?code=284740',
-                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=284740'},
-                {'종목번호': '290380', '종목명': '대유', '재무정보': 'https://finance.naver.com/item/main.nhn?code=290380',
-                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=290380'},
-                {'종목번호': '041920', '종목명': '메디아나', '재무정보': 'https://finance.naver.com/item/main.nhn?code=041920',
-                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=041920'},
-                {'종목번호': '251630', '종목명': '브이원텍', '재무정보': 'https://finance.naver.com/item/main.nhn?code=251630',
-                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=251630'},
-                {'종목번호': '335890', '종목명': '비올', '재무정보': 'https://finance.naver.com/item/main.nhn?code=335890',
-                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=335890'},
-                {'종목번호': '094840', '종목명': '슈프리마에이치큐', '재무정보': 'https://finance.naver.com/item/main.nhn?code=094840',
-                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=094840'},
-                {'종목번호': '052790', '종목명': '액토즈소프트', '재무정보': 'https://finance.naver.com/item/main.nhn?code=052790',
-                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=052790'},
-                {'종목번호': '104830', '종목명': '원익머트리얼즈', '재무정보': 'https://finance.naver.com/item/main.nhn?code=104830',
-                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=104830'},
-                {'종목번호': '078340', '종목명': '컴투스', '재무정보': 'https://finance.naver.com/item/main.nhn?code=078340',
-                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=078340'},
-                {'종목번호': '030520', '종목명': '한글과컴퓨터', '재무정보': 'https://finance.naver.com/item/main.nhn?code=030520',
-                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=030520'}]
-            """
-
-            if self.max_list:
-                for item in self.max_list:
-                    row = self.itemTable.rowCount()
-                    self.itemTable.insertRow(row)
-                    self.itemTable.setItem(row, 0, QTableWidgetItem(item['종목번호']))
-                    self.itemTable.setItem(row, 1, QTableWidgetItem(item['종목명']))
-        except Exception as e:
-            logger.error(e)
+        x = Thread(self)
+        x.start()
 
     def download_clicked(self):
         """
@@ -145,6 +185,70 @@ class WindowClass(QMainWindow, form_class):
         # Pandas writer 객체 닫기
         writer.close()
 
+    def eventFilter(self, source, event):
+        try:
+
+            if (event.type() == QtCore.QEvent.MouseButtonPress and
+                    event.buttons() == QtCore.Qt.RightButton and
+                    source is self.itemTable.viewport()):
+                item = self.itemTable.itemAt(event.pos())
+                print('Global Pos:', event.globalPos())
+                if item is not None:
+                    print('Table Item:', item.row(), item.column())
+                    self.menu = QMenu(self)
+                    self.menu.addAction(item.text())  # (QAction('test'))
+                    # menu.exec_(event.globalPos())
+        except Exception as e:
+            logger.error(e)
+        return super(QMainWindow, self).eventFilter(source, event)
+
+    def generateMenu(self, pos):
+        print("pos======", pos)
+        try:
+            self.menu.exec_(self.itemTable.mapToGlobal(pos))
+        except Exception as e:
+            logger.error(e)
+
+    def contextMenuEvent(self, pos):
+        if self.selectionModel().selection().indexes():
+            for i in self.selectionModel().selection().indexes():
+                row, column = i.row(), i.column()
+            menu = QMenu()
+            openAction = menu.addAction("Open")
+            action = menu.exec_(self.mapToGlobal(pos))
+            if action == openAction:
+                self.openAction(row, column)
+
+
+    def chartSlot(self, event):
+        try:
+            # get the selected row and column
+            row = self.itemTable.rowAt(event.pos().y())
+            col = self.itemTable.columnAt(event.pos().x())
+            # get the selected cell
+            cell = self.itemTable.item(row, col)
+            # get the text inside selected cell (if any)
+            cellText = cell.text()
+            logger.debug(cellText)
+            # get the widget inside selected cell (if any)
+            widget = self.tableWidget.cellWidget(row, col)
+        except Exception as e:
+            logger.error(e)
+
+    def __context_menu(self, position):
+        try:
+            menu = QMenu()
+            chart_action = menu.addAction("차트 보기")
+            action = menu.exec_(self.itemTable.mapToGlobal(position))
+            if action == chart_action:
+                if self.s_year_radioButton.isChecked():
+                    search_duration = int(self.search_duration_edit.text()) * 12
+                elif self.s_month_radioButton.isChecked():
+                    search_duration = int(self.search_duration_edit.text())
+                self.make_chart(search_duration, '005930' )
+        except Exception as e:
+            logger.error(e)
+
     def get_edit_text(self):
         """
             text edit 값 가져오기
@@ -154,7 +258,7 @@ class WindowClass(QMainWindow, form_class):
         # 기준일
         today = date.today()
         if self.today_radioButton.isChecked():
-            base_date = self.base_date_edit.text().strptime("%Y%m%d")
+            base_date = datetime.strptime(self.base_date_edit.text(), "%Y%m%d")
         elif self.predate_radioButton.isChecked() and self.year_radioButton.isChecked():
             base_date = today - relativedelta(years=int(self.base_date_edit.text()))
         elif self.predate_radioButton.isChecked() and self.month_radioButton.isChecked():
@@ -193,7 +297,7 @@ class WindowClass(QMainWindow, form_class):
             self.base_date_edit.setText(date.today().strftime("%Y%m%d"))
             self.year_radioButton.hide()
             self.month_radioButton.hide()
-            
+
             self.day_label.setText("일")
 
             # self.base_date = date.today().strftime("%Y%m%d")
@@ -211,6 +315,57 @@ class WindowClass(QMainWindow, form_class):
             #     self.base_date = date.today() - relativedelta(years=int(self.base_date_edit.text()))
             # elif self.month_radioButton.isChecked():
             #     self.base_date = date.today() - relativedelta(years=int(self.base_date_edit.text()))
+
+    def make_chart(self, pre_months, code):
+        """
+            차트 그리기
+        :param pre_months: 이전 월
+        :param code: 종목 번호
+        :return: 차트 결과값 반환환
+        """
+
+        KOSPI = "1001"
+        KOSDAQ = "2001"
+
+        today = datetime.today()
+        chart_base_day = today - relativedelta(months=pre_months)
+        # 차트 그리기 위한 시세조회
+        if code == KOSPI or code == KOSDAQ:
+            df = stock.get_index_ohlcv(chart_base_day.strftime("%Y%m%d"), today.strftime("%Y%m%d"), code)
+            tick_name = stock.get_index_ticker_name(code)
+        else:
+            df = stock.get_market_ohlcv(chart_base_day.strftime("%Y%m%d"), today.strftime("%Y%m%d"), code)
+            tick_name = stock.get_market_ticker_name(code)
+        df = df.astype(int)
+
+        # 캔들 차트 객체 생성
+        candle = go.Candlestick(
+            x=df.index,
+            open=df['시가'],
+            high=df['고가'],
+            low=df['저가'],
+            close=df['종가'],
+            increasing_line_color='red',  # 상승봉 스타일링
+            decreasing_line_color='blue'  # 하락봉 스타일링
+        )
+
+        # 바 차트(거래량) 객체 생성
+        volume_bar = go.Bar(x=df.index, y=df['거래량'])
+
+        fig = ms.make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.02)
+
+        fig.add_trace(candle, row=1, col=1)
+        fig.add_trace(volume_bar, row=2, col=1)
+
+        fig.update_layout(
+            title=tick_name,
+            yaxis1_title='가격',
+            yaxis2_title='거래량',
+            xaxis2_title='기간',
+            xaxis1_rangeslider_visible=False,
+            xaxis2_rangeslider_visible=True,
+        )
+        fig.show()
 
 
 # 스크립트를 실행하려면 여백의 녹색 버튼을 누릅니다.

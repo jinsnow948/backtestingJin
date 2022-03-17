@@ -1,3 +1,4 @@
+import math
 from datetime import date
 
 import requests
@@ -16,11 +17,12 @@ logging.config.dictConfig(config)
 logger = logging.getLogger('logger-1')
 
 
-def find_maxvol_mon(args):
+def find_maxvol_mon(window , args):
     """
 
         최대 거래량 찾기 (월)
 
+    :param window:
     :param args: dict = {base_date, search_duration, max_vol_occur, lowest_duration, lowest_contrast, per_rate,
     dept_rate, margin_rate}
     :return: max_tick
@@ -36,8 +38,20 @@ def find_maxvol_mon(args):
     halt_list = trading_halt_list()
     mg_list = management_list()
     max_vol_code = []
-    # try:
+    i = 0
+    pre_prgress_count = 0
     for code in total_market:
+        try:
+            i += 1
+            total_count = len(total_market)
+            progress_count = math.trunc(i/total_count*100)
+            logger.debug(f'======== total count : {len(total_market)}, count : { i }, '
+                         f'progress : {progress_count} =======')
+            if pre_prgress_count < progress_count:
+                pre_prgress_count = progress_count
+                window.progressBar.setValue(progress_count)
+        except Exception as e:
+            logger.error(e)
         logger.info('[%s] - 시세 조회', code)
         # 종목별 시세 조회
         df = stock.get_market_ohlcv(search_start_date.strftime("%Y%m%d"), args['base_date'].strftime("%Y%m%d"), code)
@@ -157,4 +171,3 @@ def management_list():
             stoplist.append(item.text.split('\n')[2])
 
     return stoplist
-
