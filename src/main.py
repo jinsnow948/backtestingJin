@@ -3,7 +3,7 @@ import sys
 
 import logging.config
 import json
-from datetime import date, datetime
+from datetime import datetime, date
 
 from PyQt5.QtCore import Qt, QThread
 from PyQt5.QtGui import QIcon
@@ -166,10 +166,10 @@ class WindowClass(QMainWindow, form_class):
         df = pd.DataFrame(self.max_list)
 
         df2 = pd.DataFrame(data=self.get_edit_text(), index=['입력값'])
-        df2 = df2.rename(columns={"base_date": "기준일", "search_duration": "종목 검색 기간",
-                                  "max_vol_within": "N개월 이내 최대 거래량", "lowest_duration": "N년 최저가",
+        df2 = df2.rename(columns={"base_date": "기준일", "search_duration": "종목 검색 기간(개월)",
+                                  "max_vol_within": "N개월 이내 최대 거래량", "lowest_duration": "N개월 최저가",
                                   "lowest_contrast": "최저가 기간 평균 대비 최저가 배수", "per_rate": "PER 평균",
-                                  "dept_rate": "부채비율", "margin_rate": "평균 영업이익률"})
+                                  "dept_rate": "부채 비율", "margin_rate": "평균 영업 이익률"})
 
         try:
             df2 = (df2.T)
