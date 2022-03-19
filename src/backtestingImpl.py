@@ -20,6 +20,26 @@ logger = logging.getLogger('logger-1')
 
 
 def backtest(window, args):
+    """
+        백테스트
+    :param window: 윈도우 폼
+    :param args: 입력값
+    :return:
+    """
+
+    # 변수 정의
+    buy_count = 0
+    매입가 = 0
+    수익률 = 0
+    보유수량 = 0
+    현재가 = 0
+    매입금액 = 0
+    # 평가금액 = ""
+    실현손익 = 0
+    실현수익률 = 0
+    초기금 = int(args['초기금']) * 1000000
+    추가금 = int(args['추가금']) * 100000
+
     today = date.today()
     code = window.code_hidden_label.text()
     max_list = window.max_list
@@ -28,29 +48,21 @@ def backtest(window, args):
     logger.debug("-------- 백테스트 종목 --------")
     logger.debug(max_df)
 
+    # 기준일자 가져오기
     base_date = window.btest_sdate_label.text()
     # 한국 공휴일 가져오기
     kr_holidays = holidays.KR()
 
+    logger.debug(f' -- 백테스트 기준일자 {base_date}')
+
     # 종목 시세표 가져오기
     df = stock.get_market_ohlcv(base_date, today.strftime("%Y%m%d"), code)
+    if df.empty:
+        raise Exception("기준 일자 입력!!")
+
     logger.debug("-------- 백테스트 ticker --------")
     logger.debug(df)
 
-    초기금 = int(args['초기금']) * 1000000
-    추가금 = int(args['추가금']) * 100000
-
-    buy_count = 0
-    매입가 = 0
-    # 평가손익 = ""
-    수익률 = 0
-    보유수량 = 0
-    현재가 = 0
-    매입금액 = 0
-    # 평가금액 = ""
-    실현손익 = 0
-    실현수익률 = 0
-    
     logger.debug(f" ** 조건 확인 - args['초기금'] {args['초기금']}, "
                  f"추가 주기 {window.add_interval_box.itemText(args['추가 주기'])}, "
                  f"매수 조건 {window.buy_cond_box.itemText(args['매수 조건'])}, "
@@ -69,10 +81,11 @@ def backtest(window, args):
             try:
                 현재가 = df.loc[day]['종가']
             except Exception as e:
+                # holiday 로 안걸러 주는 공휴일은 try 로 패스하자
                 logger.error(e)
                 continue
-            # logger.debug(f'[{code}] - 현재가 {현재가} <= 거래량 최대 종가 {max_eprice}, '
-            #              f'comp_date {comp_date}, day {day.strftime("%Y%m%d")}')
+
+            # 첫 매수
             if buy_count == 0:
                 comp_date = day
                 buy_count += 1
@@ -80,30 +93,33 @@ def backtest(window, args):
                 매입가 = 현재가
                 매입금액 = 보유수량 * 매입가
                 logger.info(f'첫 매수 - 매수일 {day.strftime("%Y%m%d")} 매수량 {보유수량}, 매입가 {매입가}, 매입 금액 {매입금액}')
-            elif args['추가 주기'] == 1 and args['매수 조건'] == 0 and relativedelta(day, comp_date).months == 0 \
+            elif args['추가 주기'] == 1 and args['매수 조건'] == 0 and day >= (comp_date + relativedelta(months=1)) \
                     and 현재가 <= max_eprice:
                 추가매수량 = math.trunc(추가금 / 현재가)
+                추가매입금액 = 현재가 * 추가매수량
                 보유수량 += 추가매수량
-                매입가 = math.trunc((매입금액 + (현재가 * 추가매수량)) / 보유수량)
-                매입금액 = 보유수량 * 매입가
+                매입가 = math.trunc((매입금액 + 추가매입금액) / 보유수량)
+                매입금액 += 추가매입금액
 
+                # 추가매수 횟수 증가 , 비교날짜 지금 날짜로 변경
                 buy_count += 1
-                comp_date = comp_date + relativedelta(months=1)
-                logger.info(f'추가 매수 - 추가 매수 날짜 {day}, 추가 매수량 {math.trunc(추가금 / 현재가)}, '
-                            f'보유 수량 {보유수량}, 매입가 {매입가}, 총 매입 금액 {매입금액}')
+                comp_date = day
+                logger.info(f'추가 매수 - 추가 매수 날짜 {day.strftime("%Y%m%d")}, 추가 매수량 {추가매수량}, '
+                            f'추가 매수 횟수 {buy_count}, 보유 수량 {보유수량}, 매입가 {매입가:,}원, 총 매입 금액 {매입금액:,}원')
             elif args['추가 주기'] == 2 and args['매수 조건'] == 0 and day >= (comp_date + relativedelta(days=7)) and\
                     현재가 <= max_eprice:
 
                 추가매수량 = math.trunc(추가금 / 현재가)
+                추가매입금액 = 현재가 * 추가매수량
                 보유수량 += 추가매수량
-                매입가 = math.trunc((매입금액 + (현재가 * 추가매수량)) / 보유수량)
-                매입금액 = 보유수량 * 매입가
+                매입가 = math.trunc((매입금액 + 추가매입금액) / 보유수량)
+                매입금액 += 추가매입금액
 
+                # 추가매수 횟수 증가 , 비교날짜 지금 날짜로 변경
                 buy_count += 1
                 comp_date = day
-                logger.info(f'추가 매수 - 추가 매수 날짜 {day}, 추가 매수량 {math.trunc(추가금 / 현재가)}, 추가 매수 횟수 {buy_count}, '
-                            f'보유 수량 {보유수량}, 매입가 {매입가:,}, 총 매입 금액 {매입금액:,}')
-
+                logger.info(f'추가 매수 - 추가 매수 날짜 {day.strftime("%Y%m%d")}, 추가 매수량 {추가매수량}, '
+                            f'추가 매수 횟수 {buy_count}, 보유 수량 {보유수량}, 매입가 {매입가:,}원, 총 매입 금액 {매입금액:,}원')
             elif args['매도 조건'] == 0 and max_df.iloc[0]['최대 거래량'] < df.loc[day]['거래량'] and \
                     max_df.iloc[0]['최대 거래량 종가'] < 현재가:
                 매도금액 = 보유수량 * 현재가
@@ -112,12 +128,12 @@ def backtest(window, args):
                 실현수익률 = math.trunc((실현손익 / (매입가 * 보유수량) * 100))
                 보유수량 = 0
                 # 수익률 = math.trunc(실현손익 / 매입금액 * 100)
-                logger.info(f'백테스트 매도 - 매도날짜 {day}, 매도가 {현재가:,}, 매도 수량 {보유수량}, 매도 금액 {매도금액:,}, '
-                            f'실현 손익 {실현손익:,}, 수익률 {수익률}, 실현수익률 {실현수익률}')
+                logger.info(f'백테스트 매도 - 매도 날짜 {day.strftime("%Y%m%d")}, 매도가 {현재가:,}원, 매도 수량 {보유수량}, '
+                            f'매도 금액 {매도금액:,원}, 실현 손익 {실현손익:,}원, 수익률 {수익률}, 실현 수익률 {실현수익률}%')
                 break
 
+    # 테이블위젯에 display
     평가손익 = (현재가 * 보유수량) - (매입가 * 보유수량)
-
     row = window.result_itemtable.rowCount()
     window.result_itemtable.insertRow(row)
     window.result_itemtable.setItem(row, 0, QTableWidgetItem(max_df.iloc[0]['종목명']))
@@ -280,6 +296,11 @@ def find_maxvol_mon(window, args):
 
 
 def naver_financial_data(code):
+    """
+        네이버로 재무정보
+    :param code: 종목번호
+    :return:
+    """
     url = f"https://finance.naver.com/item/main.nhn?code={code}"
     res = requests.get(url)
     try:
@@ -300,6 +321,10 @@ def naver_financial_data(code):
 
 
 def trading_halt_list():
+    """
+        거래정지 리스트 by naver
+    :return:
+    """
     baseaddress = 'https://finance.naver.com/sise/trading_halt.naver'
 
     stoplist = []
@@ -315,6 +340,10 @@ def trading_halt_list():
 
 
 def management_list():
+    """
+        관리종목 리스트 by naver
+    :return:
+    """
     baseaddress = 'https://finance.naver.com/sise/management.nhn'
     stoplist = []
     res = requests.get(baseaddress)
