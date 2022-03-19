@@ -35,6 +35,14 @@
      <height>661</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::LeftToRight</enum>
+   </property>
    <property name="autoFillBackground">
     <bool>false</bool>
    </property>
@@ -49,7 +57,7 @@ width: 115px;}
 QTabBar::tab:selected {background-color:rgb(85, 5, 20,77);}</string>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab1">
     <property name="styleSheet">
@@ -99,8 +107,14 @@ QTabBar::tab:selected {background-color:rgb(85, 5, 20,77);}</string>
        <height>26</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
      <property name="styleSheet">
-      <string notr="true">color: rgb(255, 255, 255);</string>
+      <string notr="true">color: rgba(255, 255, 255,145);</string>
      </property>
      <property name="text">
       <string>종목찾기</string>
@@ -115,8 +129,14 @@ QTabBar::tab:selected {background-color:rgb(85, 5, 20,77);}</string>
        <height>26</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
      <property name="styleSheet">
-      <string notr="true">color: rgb(255, 255, 255);</string>
+      <string notr="true">color: rgba(255, 255, 255,145);</string>
      </property>
      <property name="text">
       <string>엑셀저장</string>
@@ -540,19 +560,6 @@ color: rgb(0, 0, 0);</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="2">
-        <spacer name="horizontalSpacer_7">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="search_duration_label">
          <property name="text">
@@ -567,87 +574,7 @@ color: rgb(0, 0, 0);</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="lowest_contrast_label">
-         <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;최저 가격 대비 최저 기간 평균가격 배수 :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2">
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
        <item row="2" column="2">
-        <spacer name="horizontalSpacer_6">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="1" column="2">
-        <spacer name="horizontalSpacer_5">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="search_duration_edit">
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <property name="autoFillBackground">
-          <bool>false</bool>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">background-color: rgb(255, 255, 255);
-color: rgb(0, 0, 0);</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="max_vol_within_edit">
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <property name="autoFillBackground">
-          <bool>false</bool>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">background-color: rgb(255, 255, 255);
-color: rgb(0, 0, 0);</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
         <widget class="QLineEdit" name="lowest_duration_edit">
          <property name="layoutDirection">
           <enum>Qt::LeftToRight</enum>
@@ -664,7 +591,24 @@ color: rgb(0, 0, 0);</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="0" column="2">
+        <widget class="QLineEdit" name="search_duration_edit">
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(255, 255, 255);
+color: rgb(0, 0, 0);</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2">
         <widget class="QLineEdit" name="lowest_contrast_edit">
          <property name="layoutDirection">
           <enum>Qt::LeftToRight</enum>
@@ -680,6 +624,82 @@ color: rgb(0, 0, 0);</string>
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
         </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QLineEdit" name="max_vol_within_edit">
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(255, 255, 255);
+color: rgb(0, 0, 0);</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="lowest_contrast_label">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;최저 가격 대비 최저 기간 평균가격 배수 :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="1">
+        <spacer name="horizontalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="2" column="1">
+        <spacer name="horizontalSpacer_6">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="3" column="1">
+        <spacer name="horizontalSpacer_7">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -832,9 +852,9 @@ color: rgb(0, 0, 0);</string>
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>110</y>
+       <y>90</y>
        <width>831</width>
-       <height>241</height>
+       <height>261</height>
       </rect>
      </property>
      <property name="font">
@@ -858,33 +878,16 @@ color: rgb(0, 0, 0);</string>
         <x>10</x>
         <y>30</y>
         <width>811</width>
-        <height>191</height>
+        <height>221</height>
        </rect>
       </property>
-      <layout class="QGridLayout" name="gridLayout_5">
-       <item row="0" column="3">
-        <spacer name="horizontalSpacer_8">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="6">
-        <widget class="QLabel" name="label_12">
-         <property name="text">
-          <string>원</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="lineEdit_2"/>
-       </item>
+      <layout class="QGridLayout" name="gridLayout_5" rowstretch="0,0,0" rowminimumheight="0,0,0">
+       <property name="sizeConstraint">
+        <enum>QLayout::SetDefaultConstraint</enum>
+       </property>
+       <property name="verticalSpacing">
+        <number>6</number>
+       </property>
        <item row="0" column="0">
         <widget class="QLabel" name="label_10">
          <property name="styleSheet">
@@ -894,36 +897,6 @@ color: rgb(0, 0, 0);</string>
           <string>초기금</string>
          </property>
         </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_13">
-         <property name="text">
-          <string>추가 주기</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="5">
-        <widget class="QLineEdit" name="lineEdit_4"/>
-       </item>
-       <item row="0" column="2">
-        <widget class="QLabel" name="label_9">
-         <property name="text">
-          <string>원</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QComboBox" name="comboBox_2"/>
-       </item>
-       <item row="2" column="4">
-        <widget class="QLabel" name="label_14">
-         <property name="text">
-          <string>추가 조건</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="5">
-        <widget class="QComboBox" name="comboBox_3"/>
        </item>
        <item row="0" column="4">
         <widget class="QLabel" name="label_11">
@@ -935,15 +908,147 @@ color: rgb(0, 0, 0);</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item row="0" column="6">
+        <widget class="QLabel" name="label_12">
+         <property name="text">
+          <string>십만원</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <widget class="QLineEdit" name="add_money_edit">
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>백만원</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <spacer name="horizontalSpacer_8">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Minimum</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="add_interval_box">
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="currentIndex">
+          <number>2</number>
+         </property>
+         <item>
+          <property name="text">
+           <string>년 1회</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>월 1회</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>주 1회</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="4">
+        <widget class="QLabel" name="label_16">
+         <property name="text">
+          <string>매수 조건</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_13">
+         <property name="text">
+          <string>추가 주기</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
         <widget class="QLabel" name="label_15">
          <property name="text">
           <string>매도 조건</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
-        <widget class="QComboBox" name="comboBox_4"/>
+       <item row="1" column="5">
+        <widget class="QComboBox" name="buy_cond_box">
+         <property name="mouseTracking">
+          <bool>false</bool>
+         </property>
+         <item>
+          <property name="text">
+           <string>최대 거래량 기준봉 가격 범위</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>묻지마 추매</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="sell_cond_box">
+         <item>
+          <property name="text">
+           <string>기준 거래량 초과 거래량 발생시</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>존버</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="2" column="5">
+        <widget class="QPushButton" name="backTest_button">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+           <weight>75</weight>
+           <italic>true</italic>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: rgba(221, 177, 65, 211);</string>
+         </property>
+         <property name="text">
+          <string>백테스트 시작</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="init_money_edit">
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -952,9 +1057,9 @@ color: rgb(0, 0, 0);</string>
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>367</y>
+       <y>370</y>
        <width>1111</width>
-       <height>241</height>
+       <height>191</height>
       </rect>
      </property>
      <property name="font">
@@ -972,19 +1077,22 @@ color: rgb(0, 0, 0);</string>
      <property name="title">
       <string>백테스트 결과</string>
      </property>
-     <widget class="QTableWidget" name="itemTable_2">
+     <widget class="QTableWidget" name="result_itemtable">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>32</y>
+        <y>22</y>
         <width>1091</width>
-        <height>191</height>
+        <height>161</height>
        </rect>
       </property>
       <property name="font">
        <font>
         <pointsize>10</pointsize>
        </font>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
       </property>
       <property name="autoFillBackground">
        <bool>false</bool>
@@ -1009,6 +1117,9 @@ color: rgb(238, 238, 238);
       <property name="editTriggers">
        <set>QAbstractItemView::NoEditTriggers</set>
       </property>
+      <property name="textElideMode">
+       <enum>Qt::ElideRight</enum>
+      </property>
       <property name="gridStyle">
        <enum>Qt::SolidLine</enum>
       </property>
@@ -1022,24 +1133,20 @@ color: rgb(238, 238, 238);
        <property name="text">
         <string>종목명</string>
        </property>
-       <property name="foreground">
-        <brush brushstyle="NoBrush">
-         <color alpha="255">
-          <red>0</red>
-          <green>0</green>
-          <blue>0</blue>
-         </color>
-        </brush>
+      </column>
+      <column>
+       <property name="text">
+        <string>매입가</string>
        </property>
       </column>
       <column>
        <property name="text">
-        <string>실현손익</string>
+        <string>평가손익</string>
        </property>
       </column>
       <column>
        <property name="text">
-        <string>매입금액</string>
+        <string>평가금액</string>
        </property>
       </column>
       <column>
@@ -1049,12 +1156,32 @@ color: rgb(238, 238, 238);
       </column>
       <column>
        <property name="text">
+        <string>보유수량</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>현재가</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
         <string>매도가</string>
        </property>
       </column>
       <column>
        <property name="text">
-        <string>매입가</string>
+        <string>매입금액</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>실현손익</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>실현수익률</string>
        </property>
       </column>
      </widget>
@@ -1065,7 +1192,7 @@ color: rgb(238, 238, 238);
        <x>20</x>
        <y>7</y>
        <width>481</width>
-       <height>91</height>
+       <height>71</height>
       </rect>
      </property>
      <property name="font">
@@ -1087,7 +1214,7 @@ color: rgb(238, 238, 238);
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>30</y>
+        <y>22</y>
         <width>461</width>
         <height>41</height>
        </rect>
@@ -1095,8 +1222,15 @@ color: rgb(238, 238, 238);
       <layout class="QGridLayout" name="gridLayout_3">
        <item row="0" column="3">
         <widget class="QLabel" name="btest_sdate_label">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="styleSheet">
-          <string notr="true">color: rgb(255, 133, 10);</string>
+          <string notr="true">color: rgba(221, 177, 65, 211);</string>
          </property>
          <property name="text">
           <string/>
@@ -1104,7 +1238,7 @@ color: rgb(238, 238, 238);
         </widget>
        </item>
        <item row="0" column="0">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="sname_label">
          <property name="styleSheet">
           <string notr="true">color: rgb(255, 255, 255);</string>
          </property>
@@ -1115,8 +1249,15 @@ color: rgb(238, 238, 238);
        </item>
        <item row="0" column="1">
         <widget class="QLabel" name="btest_stock_label">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="styleSheet">
-          <string notr="true">color: rgb(255, 133, 10);</string>
+          <string notr="true">color: rgba(221, 177, 65, 211);</string>
          </property>
          <property name="text">
           <string/>
@@ -1124,7 +1265,7 @@ color: rgb(238, 238, 238);
         </widget>
        </item>
        <item row="0" column="2">
-        <widget class="QLabel" name="label_3">
+        <widget class="QLabel" name="sdate_label">
          <property name="text">
           <string>기준일</string>
          </property>
@@ -1132,6 +1273,41 @@ color: rgb(238, 238, 238);
        </item>
       </layout>
      </widget>
+    </widget>
+    <widget class="QLabel" name="code_hidden_label">
+     <property name="geometry">
+      <rect>
+       <x>510</x>
+       <y>60</y>
+       <width>56</width>
+       <height>12</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="excel_download2_button">
+     <property name="geometry">
+      <rect>
+       <x>1010</x>
+       <y>574</y>
+       <width>121</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgba(255, 255, 255,145);</string>
+     </property>
+     <property name="text">
+      <string>엑셀저장</string>
+     </property>
     </widget>
    </widget>
   </widget>
@@ -1156,6 +1332,7 @@ color: rgb(238, 238, 238);
 {
 border: solid grey;
 border-radius: 15px;
+text-align:center;
 color: white;
 }
 QProgressBar::chunk 
