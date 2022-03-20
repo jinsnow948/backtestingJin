@@ -1,4 +1,3 @@
-import csv
 import json
 import logging.config
 import os
@@ -9,15 +8,13 @@ from tkinter import filedialog, messagebox
 
 import pandas
 import pandas as pd
-import xlsxwriter
-import xlwt as xlwt
 from PyQt5 import uic, QtCore
 from PyQt5.QtCore import Qt, QThread
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import *
 from dateutil.relativedelta import relativedelta
 
-from backtestingImpl import make_chart, backtest
+from backtestingImpl import make_chart, backtest, find_maxvol_mon
 
 form_class = uic.loadUiType("designingJin.ui")[0]
 
@@ -32,6 +29,7 @@ class Thread(QThread):
     def run(self):
         try:
             # 상위 윈도우 위젯 기본값 설정
+            self.parent.progressBar.setValue(0)
             self.parent.progressBar.show()
             self.parent.search_button.setDisabled(True)
             self.parent.excel_download_button.setDisabled(True)
@@ -39,29 +37,22 @@ class Thread(QThread):
             args = self.parent.get_edit_text()
 
             # 종목 찾기 결과 리스트
-            # self.parent.max_list: list[dict[str, str]] = find_maxvol_mon(self.parent, args)
+            self.parent.max_list: list[dict[str, str]] = find_maxvol_mon(self.parent, args)
+            """
             self.parent.max_list = [
-                {'종목 번호': '000995', '종목명': 'DB하이텍1우', '최대 거래량 시가': 44000, '최대 거래량 종가': 41000, '최대 거래량': 146233,
-                 '최대 거래 날짜': '20170308', '재무 정보': 'https://finance.naver.com/item/main.nhn?code=000995',
-                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=000995'},
-                {'종목 번호': '005935', '종목명': '삼성전자우', '최대 거래량 시가': 30640, '최대 거래량 종가': 31640, '최대 거래량': 1587462,
-                 '최대 거래 날짜': '20170125', '재무 정보': 'https://finance.naver.com/item/main.nhn?code=005935',
+                {'종목 번호': '035420', '종목명': 'NAVER', '최대 거래량 시가': 132500, '최대 거래량 종가': 130000, '최대 거래량': 5304519,
+                 '최대 거래 날짜': '20181017', '재무 정보': 'https://finance.naver.com/item/main.nhn?code=035420',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=035420'},
+                {'종목 번호': '005935', '종목명': '삼성전자우', '최대 거래량 시가': 36700, '최대 거래량 종가': 36000, '최대 거래량': 6438669,
+                 '최대 거래 날짜': '20190228', '재무 정보': 'https://finance.naver.com/item/main.nhn?code=005935',
                  '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=005935'},
-                {'종목 번호': '019550', '종목명': 'SBI인베스트먼트', '최대 거래량 시가': 871, '최대 거래량 종가': 885, '최대 거래량': 82571452,
-                 '최대 거래 날짜': '20170315', '재무 정보': 'https://finance.naver.com/item/main.nhn?code=019550',
-                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=019550'},
-                {'종목 번호': '207760', '종목명': '미스터블루', '최대 거래량 시가': 3430, '최대 거래량 종가': 3695, '최대 거래량': 3815561,
-                 '최대 거래 날짜': '20160928', '재무 정보': 'https://finance.naver.com/item/main.nhn?code=207760',
-                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=207760'},
-                {'종목 번호': '123570', '종목명': '이엠넷', '최대 거래량 시가': 2735, '최대 거래량 종가': 3520, '최대 거래량': 8270362,
-                 '최대 거래 날짜': '20170105', '재무 정보': 'https://finance.naver.com/item/main.nhn?code=123570',
-                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=123570'},
-                {'종목 번호': '044060', '종목명': '조광ILI', '최대 거래량 시가': 7530, '최대 거래량 종가': 7680, '최대 거래량': 9082120,
-                 '최대 거래 날짜': '20161115', '재무 정보': 'https://finance.naver.com/item/main.nhn?code=044060',
-                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=044060'},
-                {'종목 번호': '045340', '종목명': '토탈소프트', '최대 거래량 시가': 5950, '최대 거래량 종가': 5390, '최대 거래량': 12033508,
-                 '최대 거래 날짜': '20161118', '재무 정보': 'https://finance.naver.com/item/main.nhn?code=045340',
-                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=045340'}]
+                {'종목 번호': '003800', '종목명': '에이스침대', '최대 거래량 시가': 23600, '최대 거래량 종가': 23800, '최대 거래량': 37432,
+                 '최대 거래 날짜': '20181220', '재무 정보': 'https://finance.naver.com/item/main.nhn?code=003800',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=003800'},
+                {'종목 번호': '123570', '종목명': '이엠넷', '최대 거래량 시가': 2340, '최대 거래량 종가': 2930, '최대 거래량': 8451016,
+                 '최대 거래 날짜': '20190313', '재무 정보': 'https://finance.naver.com/item/main.nhn?code=123570',
+                 '뉴스': 'https://finance.naver.com/item/news_news.nhn?code=123570'}]
+            """
 
             # 테이블뷰에 보여주기
             if self.parent.max_list:
@@ -207,6 +198,8 @@ class WindowClass(QMainWindow, form_class):
                 {'font_name': 'Arial', 'font_size': 10, 'bold': True, 'font_color': 'white',
                  'bg_color': '#214567'})
 
+            num_fmt = workbook.add_format({'num_format': '#,##0원'})
+            date_fmt = workbook.add_format({'num_format': 'yyyy년mm월dd일'})
             worksheet.write(0, 0, '번호', header_fmt)
             worksheet.write(0, 10, '항목', header_fmt)
 
@@ -214,6 +207,8 @@ class WindowClass(QMainWindow, form_class):
                 worksheet.write(0, columnnum + 1, columnname, header_fmt)
             for columnnum, columnname in enumerate(list(df2.columns)):
                 worksheet.write(0, columnnum + 11, columnname, header_fmt)
+
+            worksheet.set_column('D:E', 15, num_fmt)
 
             # 엑셀 저장
             writer.save()
@@ -324,9 +319,9 @@ class WindowClass(QMainWindow, form_class):
                 item1 = self.itemTable.item(item.row(), 1)
                 self.btest_stock_label.setText(item1.text())
                 args = self.get_edit_text()
-                self.btest_sdate_label.setText(args['base_date'].strftime("%Y%m%d"))
-                self.init_money_edit.setText('1')
-                self.add_money_edit.setText('1')
+                self.btest_sdate_label.setText(args['base_date'])
+                self.init_money_edit.setText('30')
+                self.add_money_edit.setText('3')
 
         return super(QMainWindow, self).eventFilter(source, event)
 

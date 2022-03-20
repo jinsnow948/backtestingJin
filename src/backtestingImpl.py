@@ -58,18 +58,18 @@ def backtest(window, args):
     # 종목 시세표 가져오기
     df = stock.get_market_ohlcv(base_date, today.strftime("%Y%m%d"), code)
     if df.empty:
-        raise Exception("기준 일자 입력!!")
+        raise Exception("백테스팅은 이전 기준일로 찾아진 종목으로 수행!!")
 
     logger.debug("-------- 백테스트 ticker --------")
     logger.debug(df)
 
-    logger.debug(f" ** 조건 확인 - args['초기금'] {args['초기금']}, "
-                 f"추가 주기 {window.add_interval_box.itemText(args['추가 주기'])}, "
-                 f"매수 조건 {window.buy_cond_box.itemText(args['매수 조건'])}, "
-                 f"매도 조건 {window.sell_cond_box.itemText(args['매도 조건'])}, "
-                 f"최대 거래량 날짜 {max_df.iloc[0]['최대 거래 날짜']}, "
-                 f"최대 거래량 시가 {max_df.iloc[0]['최대 거래량 시가']}, "
-                 f"최대 거래량 종가 {max_df.iloc[0]['최대 거래량 종가']}")
+    logger.info(f" ** 조건 확인 - 초기금액 {초기금:,}원, "
+                f"추가 주기 {window.add_interval_box.itemText(args['추가 주기'])}, "
+                f"매수 조건 {window.buy_cond_box.itemText(args['매수 조건'])}, "
+                f"매도 조건 {window.sell_cond_box.itemText(args['매도 조건'])}, "
+                f"최대 거래량 날짜 {max_df.iloc[0]['최대 거래 날짜']}, "
+                f"최대 거래량 시가 {max_df.iloc[0]['최대 거래량 시가']}, "
+                f"최대 거래량 종가 {max_df.iloc[0]['최대 거래량 종가']}")
 
     max_sprice = max_df.iloc[0]['최대 거래량 시가']
     max_eprice = max_df.iloc[0]['최대 거래량 종가']
@@ -85,6 +85,10 @@ def backtest(window, args):
                 logger.error(e)
                 continue
 
+            logger.debug(f"[{code}] 매도 조건 확인 - 현재날짜 {day.strftime('%Y년%m월%d일')}, 현재가 {현재가:,}원, "
+                         f"최대 거래량 종가 {max_df.iloc[0]['최대 거래량 종가']:,}원, "
+                         f"최대 거래량 {max_df.iloc[0]['최대 거래량']}, "
+                         f"현재 거래량 {df.loc[day]['거래량']}, ")
             # 첫 매수
             if buy_count == 0:
                 comp_date = day
@@ -92,7 +96,7 @@ def backtest(window, args):
                 보유수량 = math.trunc(초기금 / 현재가)
                 매입가 = 현재가
                 매입금액 = 보유수량 * 매입가
-                logger.info(f'첫 매수 - 매수일 {day.strftime("%Y%m%d")} 매수량 {보유수량}, 매입가 {매입가}, 매입 금액 {매입금액}')
+                logger.info(f'[{code}] 첫 매수 - 매수일 {day.strftime("%Y%m%d")} 매수량 {보유수량}, 매입가 {매입가}, 매입 금액 {매입금액}')
             elif args['추가 주기'] == 1 and args['매수 조건'] == 0 and day >= (comp_date + relativedelta(months=1)) \
                     and 현재가 <= max_eprice:
                 추가매수량 = math.trunc(추가금 / 현재가)
@@ -104,9 +108,9 @@ def backtest(window, args):
                 # 추가매수 횟수 증가 , 비교날짜 지금 날짜로 변경
                 buy_count += 1
                 comp_date = day
-                logger.info(f'추가 매수 - 추가 매수 날짜 {day.strftime("%Y%m%d")}, 추가 매수량 {추가매수량}, '
+                logger.info(f'[{code}] 추가 매수 - 추가 매수 날짜 {day.strftime("%Y%m%d")}, 추가 매수량 {추가매수량}, '
                             f'추가 매수 횟수 {buy_count}, 보유 수량 {보유수량}, 매입가 {매입가:,}원, 총 매입 금액 {매입금액:,}원')
-            elif args['추가 주기'] == 2 and args['매수 조건'] == 0 and day >= (comp_date + relativedelta(days=7)) and\
+            elif args['추가 주기'] == 2 and args['매수 조건'] == 0 and day >= (comp_date + relativedelta(days=7)) and \
                     현재가 <= max_eprice:
 
                 추가매수량 = math.trunc(추가금 / 현재가)
@@ -118,7 +122,7 @@ def backtest(window, args):
                 # 추가매수 횟수 증가 , 비교날짜 지금 날짜로 변경
                 buy_count += 1
                 comp_date = day
-                logger.info(f'추가 매수 - 추가 매수 날짜 {day.strftime("%Y%m%d")}, 추가 매수량 {추가매수량}, '
+                logger.info(f'[{code}] 추가 매수 - 추가 매수 날짜 {day.strftime("%Y%m%d")}, 추가 매수량 {추가매수량}, '
                             f'추가 매수 횟수 {buy_count}, 보유 수량 {보유수량}, 매입가 {매입가:,}원, 총 매입 금액 {매입금액:,}원')
             elif args['매도 조건'] == 0 and max_df.iloc[0]['최대 거래량'] < df.loc[day]['거래량'] and \
                     max_df.iloc[0]['최대 거래량 종가'] < 현재가:
@@ -128,9 +132,13 @@ def backtest(window, args):
                 실현수익률 = math.trunc((실현손익 / (매입가 * 보유수량) * 100))
                 보유수량 = 0
                 # 수익률 = math.trunc(실현손익 / 매입금액 * 100)
-                logger.info(f'백테스트 매도 - 매도 날짜 {day.strftime("%Y%m%d")}, 매도가 {현재가:,}원, 매도 수량 {보유수량}, '
-                            f'매도 금액 {매도금액:,원}, 실현 손익 {실현손익:,}원, 수익률 {수익률}, 실현 수익률 {실현수익률}%')
+                logger.info(f'[{code}] 매도 - 최초 매수일 {base_date}, 매도 날짜 {day.strftime("%Y%m%d")}, 매도가 {현재가:,}원, '
+                            f'매도 수량 {보유수량}, 매도 금액 {매도금액:,}원, 실현 손익 {실현손익:,}원, 수익률 {수익률}, '
+                            f'실현 수익률 {실현수익률}%')
                 break
+
+    if window.clear_checkBox.isChecked():
+        window.result_itemtable.setRowCount(0)
 
     # 테이블위젯에 display
     평가손익 = (현재가 * 보유수량) - (매입가 * 보유수량)
@@ -170,31 +178,32 @@ def find_maxvol_mon(window, args):
     :return: max_tick
     """
 
-    today = date.today()
+    # today = date.today()
+    base_date = datetime.strptime(args['base_date'], "%Y%m%d").date()
     # 종목 찾기 시작 날짜
-    search_start_date = args['base_date'] - relativedelta(months=int(args['search_duration']))
+    search_start_date = base_date - relativedelta(months=int(args['search_duration']))
 
     # 6개월 이전에 종목 상장 여부 확인
-    six_mon_ago = args['base_date'] - relativedelta(months=6)
+    six_mon_ago = base_date - relativedelta(months=6)
     kospi_six_ago = stock.get_market_ticker_list(date=six_mon_ago, market="KOSPI")
     kosdaq_six_ago = stock.get_market_ticker_list(date=six_mon_ago, market="KOSDAQ")
     total_six_list = kospi_six_ago + kosdaq_six_ago
 
     # 최저가 시작 날짜
-    start_low_dur = args['base_date'] - relativedelta(months=args['lowest_duration'])
+    start_low_dur = base_date - relativedelta(months=args['lowest_duration'])
 
     # 최대 거래 발생 시작일
-    max_vol_within_date = (args['base_date'] - relativedelta(months=int(args['max_vol_within'])))
+    max_vol_within_date = (base_date - relativedelta(months=int(args['max_vol_within'])))
 
-    logger.info(f"기준 일자 : {args['base_date']} 종목 찾기 시작 날짜 : {search_start_date}, "
-                f"기준일 6개월 전 날짜 : {six_mon_ago}, 최저가 시작 날짜 : {start_low_dur}, "
-                f"최대 거래 발생 시작일 : {max_vol_within_date}")
+    logger.info(f"기준 일자 : {base_date.strftime('%Y%m%d')} 종목 찾기 시작 날짜 : {search_start_date.strftime('%Y%m%d')}, "
+                f"기준일 6개월 전 날짜 : {six_mon_ago.strftime('%Y%m%d')}, 최저가 시작 날짜 : {start_low_dur.strftime('%Y%m%d')}, "
+                f"최대 거래 발생 시작일 : {max_vol_within_date.strftime('%Y%m%d')}")
 
     # 전종목 조회하기
-    kospi_market = stock.get_market_ticker_list(date=args['base_date'], market="KOSPI")
-    kosdaq_market = stock.get_market_ticker_list(date=args['base_date'], market="KOSDAQ")
+    kospi_market = stock.get_market_ticker_list(date=base_date, market="KOSPI")
+    kosdaq_market = stock.get_market_ticker_list(date=base_date, market="KOSDAQ")
     total_market = kospi_market + kosdaq_market
-    # total_market = ['377190']
+    # total_market = ['367340']
     halt_list = trading_halt_list()
     mg_list = management_list()
     max_vol_code = []
@@ -214,7 +223,7 @@ def find_maxvol_mon(window, args):
 
         logger.info('[%s] ------ 시세 조회 ------ ', code)
         # 종목별 시세 조회
-        df = stock.get_market_ohlcv(search_start_date.strftime("%Y%m%d"), args['base_date'].strftime("%Y%m%d"), code)
+        df = stock.get_market_ohlcv(search_start_date.strftime("%Y%m%d"), base_date.strftime("%Y%m%d"), code)
         # df = df.resample('M').last()  # 월로 변경
 
         logger.debug('******** 전체 dataframe **********')
@@ -254,15 +263,17 @@ def find_maxvol_mon(window, args):
 
         subset_df_avg = subset_df['종가'].mean()
         logger.info(f'[{code}] ++ 주가 ++ ')
-        logger.info(f'[{code}] - 최대 거래 날짜 {max_vol_date}, 최대 거래량 종가 {max_vol_last_price}')
-        logger.info(f'[{code}] - 최저가 날짜 {lowest_price_day}, 최저가 가격 {lowest_price},'
-                    f' 최저가 기간 평균 가격 {subset_df_avg}')
+        logger.info(f'[{code}] - 최대 거래 날짜 {max_vol_date.strftime("%Y%m%d")}, 최대 거래량 종가 {max_vol_last_price:,}원')
+        logger.info(f'[{code}] - 최저가 날짜 {lowest_price_day.strftime("%Y%m%d")}, 최저가 가격 {lowest_price:,}원,'
+                    f' 최저가 기간 평균 가격 {math.trunc(subset_df_avg):,}원')
 
         logger.info('[%s] ------ 재무정보 조회 ------ ', code)
         annual_df = naver_financial_data(code)
+        logger.debug(annual_df)
 
         # 재무정보 없는거 일단 거르자, '리츠' 이런 종목 인거 같음
         if annual_df.empty:
+            logger.warning(f'[{code}] - 재무정보 없음')
             continue
 
         try:
@@ -273,12 +284,16 @@ def find_maxvol_mon(window, args):
             logger.error('[%s] - %s', code, ve)
             continue
 
+        if math.isnan(PER평균) or math.isnan(부채비율) or math.isnan(영업이익률):
+            logger.warning(f'[{code}] - PER평균 or 부채비율 or 영업이익률 is Nan')
+            continue
+
         logger.info(f'[{code}] ++ 성장성 ++ ')
 
         logger.info(f'PER 평균: {math.trunc(PER평균)}%, 부채 비율 평균: {math.trunc(부채비율)}%, '
                     f'영업 이익률 평균: {math.trunc(영업이익률)}%')
         # 최대 거래 월이 현재로부터 N 개월 안에 터졌다면 종목 추가
-        if max_vol_within_date <= max_vol_date.date() <= args['base_date'] and \
+        if max_vol_within_date <= max_vol_date.date() <= base_date and \
                 lowest_price * float(args['lowest_contrast']) >= subset_df_avg and \
                 PER평균 < int(args['per_rate']) and 부채비율 < int(args['dept_rate']) and \
                 영업이익률 >= int(args['margin_rate']):
@@ -305,8 +320,8 @@ def naver_financial_data(code):
     res = requests.get(url)
     try:
         financial_stmt = pd.read_html(res.text)[3]
-    except Exception as e:
-        logger.error(e)
+    except ValueError as ve:
+        logger.error(f'재무정보가 존재하지 않음 [{ve}]')
         return pd.DataFrame()
 
     if ('주요재무정보', '주요재무정보', '주요재무정보') in financial_stmt.columns:
