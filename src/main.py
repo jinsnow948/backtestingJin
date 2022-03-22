@@ -19,6 +19,13 @@ from backtestingImpl import make_chart, backtest, find_maxvol_mon
 form_class = uic.loadUiType("designingJin.ui")[0]
 
 
+if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
+    QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+
+if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
+    QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
+
+
 # 종목찾기 쓰레드
 class Thread(QThread):
 
@@ -79,10 +86,10 @@ class Thread(QThread):
             root.mainloop()
 
 
-# 윈도우 클래스
 class WindowClass(QMainWindow, form_class):
     def __init__(self):
-        super().__init__()
+        super(QMainWindow, self).__init__()
+        # super().__init__()
         self.setupUi(self)
 
         # 이벤트 연결
